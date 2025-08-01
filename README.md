@@ -1,5 +1,48 @@
 # terraform-dsc-initial-setup
-A terraform module to perform common GCP project set-up tasks
+An opinionated terraform module to perform common GCP project set-up tasks,
+including:
+- Enabling APIs and services
+- Creating and managing:
+    - Terraform Cloud Build service account (for planning/applying in Cloud
+    Build), with least privilege IAM roles.
+    - GCS buckets for Terraform state remote backend and Cloud Build artifacts
+    (with object IAM bindings to limit access).
+    - Secret Manager secret for tfvars variables.
+
+## Installation
+
+🚧 *To be added* 🚧
+
+## Usage
+
+A skeleton for the basic usage of this module would look like:
+
+```hcl
+module "terraform-dsc-initial-setup" {
+  source = "path/to/module"
+  project_id = "<PROJECT-ID>"
+  project_env = <PROJECT_ENV> # e.g., sandbox, dev, staging, prod
+  region = "<REGION>"
+  admins_owners_group_email = "<ADMINS-OWNERS-GOOGLE-GROUP-EMAIL>"
+  cloud_eng_group_email = "<CLOUD-ENG-GOOGLE-GROUP-EMAIL>"
+  apis_services = [
+    "cloudbuild.googleapis.com",
+    "cloudresourcemanager.googleapis.com",
+    "iam.googleapis.com",
+    "secretmanager.googleapis.com",
+    "storage.googleapis.com"
+  ]
+  tf_cloud_build_sa_roles = [
+    "roles/cloudbuild.builds.builder",
+    "roles/logging.logWriter",
+    "roles/storage.objectUser",
+    "roles/serviceusage.serviceUsageConsumer"
+  ]
+}
+```
+
+For a full list of configurable inputs, see the [Inputs](#inputs) section
+below.
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
