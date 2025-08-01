@@ -43,10 +43,11 @@ jobs:
         wget -qO- https://api.github.com/repos/aquasecurity/trivy/releases/latest | grep "browser_download_url.*Linux-64bit.deb" | cut -d '"' -f 4 | wget -qi -
         sudo dpkg -i trivy_*_Linux-64bit.deb
     - name: Install terraform-docs
-      run: |
-        curl -sSLo ./terraform-docs.tar.gz https://terraform-docs.io/dl/v0.20.0/terraform-docs-v0.20.0-$(uname)-amd64.tar.gz
-        tar -xzf terraform-docs.tar.gz
-        chmod +x terraform-docs
+      uses: terraform-docs/gh-actions@1.4.1
+      with:
+        working-dir: ./module
+        output-file: README.md
+        fail-on-diff: true
     - name: Install pre-commit checks
       run: |
         pre-commit install
