@@ -11,6 +11,11 @@ variable "region" {
   type        = string
   nullable    = false
 }
+variable "project_env" {
+  description = "The environment of the project (e.g., dev, staging, prod)."
+  type        = string
+  nullable    = false
+}
 
 ################
 # API SERVICES #
@@ -78,4 +83,24 @@ variable "tfvars_secret_version_delete_ttl" {
   type        = string
   nullable    = true
   default     = "1209600s"
+}
+
+##################
+# tfvars buckets #
+##################
+variable "admins_owners_group_email" {
+  description = "Google group email of the that will have object admin access to the terraform GCS buckets."
+  type        = string
+  nullable    = false
+}
+variable "cloud_eng_group_email" {
+  description = "Google group email of the cloud engineering team that will have object viewer access to the terraform GCS buckets."
+  type        = string
+  nullable    = false
+}
+variable "tf_bucket_force_destroy" {
+  description = "Whether to force destroy the GCS buckets."
+  type        = bool
+  nullable    = false
+  default     = false
 }
