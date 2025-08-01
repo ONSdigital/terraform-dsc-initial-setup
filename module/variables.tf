@@ -10,6 +10,7 @@ variable "region" {
   description = "The GCP region where the resources will be created."
   type        = string
   nullable    = false
+  default     = "europe-west2"
 }
 variable "project_env" {
   description = "The environment of the project (e.g., sandbox, dev, staging, prod)."
