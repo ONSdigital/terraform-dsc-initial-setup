@@ -3,10 +3,11 @@ An opinionated terraform module to perform common GCP project set-up tasks,
 including:
 - Enabling APIs and services
 - Creating and managing:
-    - Terraform Cloud Build service account (for planning/applying in Cloud
+    - A Terraform Cloud Build service account (for planning/applying in Cloud
     Build), with least privilege IAM roles.
     - GCS buckets for Terraform state remote backend and Cloud Build artifacts
-    (with object IAM bindings to limit access).
+    (including logs, plans, and sources), all with object IAM bindings to
+    control access.
     - Secret Manager secret for tfvars variables.
 
 ## Installation
