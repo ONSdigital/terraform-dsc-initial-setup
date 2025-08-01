@@ -37,3 +37,18 @@ EOF
   nullable    = false
   default     = true
 }
+
+#######
+# IAM #
+#######
+variable "tf_cloud_build_sa_roles" {
+  description = "List of IAM roles to assign to the Terraform Cloud Build service account."
+  type        = list(string)
+  nullable    = false
+  default = [
+    "roles/cloudbuild.builds.builder",
+    "roles/logging.logWriter",
+    "roles/storage.objectUser",
+    "roles/serviceusage.serviceUsageConsumer",
+  ]
+}
