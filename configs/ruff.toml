@@ -1,0 +1,15 @@
+line-length = 79
+
+[lint]
+# D - pydocstyle, I - isort, W - pycodestyle warning (not use E since unstable
+# in current ruff release), S - bandit, C - code complexity
+extend-select = ["D", "I", "W", "S", "C"]
+ignore = ["D105", "D107", "D202"]
+
+[lint.per-file-ignores]
+"**/tests/*.py" = [
+    "S101", # asserts allowed in tests
+]
+
+[lint.pydocstyle]
+convention = "numpy"
