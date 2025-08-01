@@ -6,6 +6,11 @@ variable "project_id" {
   type        = string
   nullable    = false
 }
+variable "region" {
+  description = "The GCP region where the resources will be created."
+  type        = string
+  nullable    = false
+}
 
 ################
 # API SERVICES #
@@ -51,4 +56,20 @@ variable "tf_cloud_build_sa_roles" {
     "roles/storage.objectUser",
     "roles/serviceusage.serviceUsageConsumer",
   ]
+}
+
+##################
+# tfvars secrets #
+##################
+variable "tfvars_secret_id" {
+  description = "The ID of the secret in Secret Manager where tfvars will be stored."
+  type        = string
+  nullable    = false
+  default     = "tfvars"
+}
+variable "tfvars_secret_version_delete_ttl" {
+  description = "The time to live for tfvars secret versions before they are deleted."
+  type        = string
+  nullable    = true
+  default     = "1209600s"
 }
