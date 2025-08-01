@@ -10,6 +10,7 @@ on:
 # environment variables
 env:
   PYTHON_VERSION: "3.13.3"    # python version
+  TERRAFORM_VERSION: "1.12.2"  # terraform version
 
 jobs:
 
@@ -35,6 +36,10 @@ jobs:
       with:
         path: ~/.cache/pre-commit
         key: ${{ runner.os }}-precommit-${{ hashFiles('.pre-commit-config.yaml') }}
+    - name: Install terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: ${{ env.TERRAFORM_VERSION }}
     - name: Install tflint
       run: |
         curl -L https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
