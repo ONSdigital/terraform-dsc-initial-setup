@@ -99,12 +99,17 @@ variable "admins_owners_group_email" {
   nullable    = false
 }
 variable "cloud_eng_group_email" {
-  description = "Google group email of the cloud engineering team that will have object viewer access to the terraform GCS buckets."
+  description = "Google group email of the cloud engineering team that will have object creator access to the terraform GCS buckets."
   type        = string
   nullable    = false
 }
 variable "tf_bucket_force_destroy" {
-  description = "Whether to force destroy the GCS buckets."
+  description = <<EOF
+Whether to force destroy the GCS buckets, allowing deletion of non-empty buckets.
+Set to `true` to allow deletion of non-empty buckets (recommended for Sandbox/Dev environments only).
+Set to `false` to prevent deletion of non-empty buckets (recommended for Staging/Prod environments).
+See: https://www.terraform.io/docs/providers/google/r/storage_bucket.html#force_destroy-1
+EOF
   type        = bool
   nullable    = false
   default     = false
