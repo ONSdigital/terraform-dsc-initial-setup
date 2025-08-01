@@ -22,7 +22,7 @@ A skeleton for the basic usage of this module would look like:
 module "terraform-dsc-initial-setup" {
   source = "path/to/module"
   project_id = "<PROJECT-ID>"
-  project_env = <PROJECT_ENV> # e.g., sandbox, dev, staging, prod
+  project_env = "<PROJECT_ENV>" # e.g., sandbox, dev, staging, prod
   region = "<REGION>" # region where all resources will be created
   admins_owners_group_email = "<ADMINS-OWNERS-GOOGLE-GROUP-EMAIL>" # get object admin role on all tf buckets
   cloud_eng_group_email = "<CLOUD-ENG-GOOGLE-GROUP-EMAIL>" # get object creator role on all tf buckets
