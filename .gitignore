@@ -36,6 +36,9 @@ override.tf.json
 .terraformrc
 terraform.rc
 
+# module .terraform.lock.hcl - not required for module
+module/.terraform.lock.hcl
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
