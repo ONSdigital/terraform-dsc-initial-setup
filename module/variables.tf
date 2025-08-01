@@ -18,7 +18,13 @@ variable "region" {
 variable "apis_services" {
   description = "List of APIs/services to be activated in the project, in XXXX.googleapis.com format."
   type        = list(string)
-  nullable    = false
+  default = [
+    "cloudbuild.googleapis.com",
+    "cloudresourcemanager.googleapis.com",
+    "iam.googleapis.com",
+    "secretmanager.googleapis.com",
+    "storage.googleapis.com",
+  ]
 }
 variable "disable_services_on_destroy" {
   description = <<EOF
