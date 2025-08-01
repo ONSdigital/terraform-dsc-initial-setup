@@ -46,7 +46,7 @@ jobs:
       uses: terraform-docs/gh-actions@v1.4.1
       with:
         working-dir: ./module
-        output-file: README.md
+        output-file: ../README.md
         fail-on-diff: true
     - name: Install pre-commit checks
       run: |
