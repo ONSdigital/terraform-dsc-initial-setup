@@ -22,17 +22,17 @@ module "terraform-dsc-initial-setup" {
   source = "path/to/module"
   project_id = "<PROJECT-ID>"
   project_env = <PROJECT_ENV> # e.g., sandbox, dev, staging, prod
-  region = "<REGION>"
-  admins_owners_group_email = "<ADMINS-OWNERS-GOOGLE-GROUP-EMAIL>"
-  cloud_eng_group_email = "<CLOUD-ENG-GOOGLE-GROUP-EMAIL>"
-  apis_services = [
+  region = "<REGION>" # region where all resources will be created
+  admins_owners_group_email = "<ADMINS-OWNERS-GOOGLE-GROUP-EMAIL>" # get object admin role on all tf buckets
+  cloud_eng_group_email = "<CLOUD-ENG-GOOGLE-GROUP-EMAIL>" # get object creator role on all tf buckets
+  apis_services = [ # List of APIs/services to be activated in the project, in XXXX.googleapis.com format.
     "cloudbuild.googleapis.com",
     "cloudresourcemanager.googleapis.com",
     "iam.googleapis.com",
     "secretmanager.googleapis.com",
     "storage.googleapis.com"
   ]
-  tf_cloud_build_sa_roles = [
+  tf_cloud_build_sa_roles = [ # List of IAM roles to assign to the Terraform Cloud Build service account.
     "roles/cloudbuild.builds.builder",
     "roles/logging.logWriter",
     "roles/storage.objectUser",
