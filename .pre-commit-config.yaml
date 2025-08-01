@@ -1,0 +1,63 @@
+---
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-yaml
+        args:
+          - --allow-multiple-documents
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: detect-private-key
+      - id: fix-byte-order-marker
+      - id: check-added-large-files # check for files above certain size (as likely to be data files)
+        args: ["--maxkb=500"]
+      - id: check-case-conflict # check for files that would conflict in case-insensitive file systems.
+      - id: check-merge-conflict # check for files that contain merge conflict strings.
+
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.99.5
+    hooks:
+      - id: terraform_fmt
+      - id: terraform_validate
+      - id: terraform_tflint
+      - id: terraform_trivy
+        args:
+          - --args=--ignorefile=__GIT_WORKING_DIR__/configs/.trivyignore
+
+  - repo: https://github.com/bridgecrewio/checkov.git
+    rev: 3.2.457
+    hooks:
+      - id: checkov
+        args: [--config-file, ./configs/checkov.yml]
+
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.5.0
+    hooks:
+      - id: detect-secrets
+        args:
+          - --baseline
+          - ./configs/.secrets.baseline
+
+  - repo: https://github.com/terraform-docs/terraform-docs
+    rev: "v0.20.0"
+    hooks:
+      - id: terraform-docs-go
+        name: terraform-docs (module)
+        files: ^module/
+        args:
+          - "markdown"
+          - "table"
+          - "--output-file"
+          - "README.md"
+          - "./module"
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.12.7
+    hooks:
+      # Run the linter.
+      - id: ruff
+        args: [--fix, --config=./configs/ruff.toml]
+      # Run the formatter.
+      - id: ruff-format
+        args: [--config=./configs/ruff.toml]
