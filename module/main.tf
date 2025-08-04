@@ -57,15 +57,9 @@ module "tf-service-account" {
 # tfvars secrets #
 ##################
 # no currently available gcp/terraform module for secret manager (auto-push/pull of secrets only)
-resource "google_secret_manager_secret" "tfvars_secrets" {
-  secret_id = var.tfvars_secret_id
-  replication {
-    user_managed {
-      replicas {
-        location = var.region
-      }
-    }
-  }
+resource "google_secret_manager_regional_secret" "tfvars-secret" {
+  secret_id           = var.tfvars_secret_id
+  location            = var.region
   version_destroy_ttl = var.tfvars_secret_version_delete_ttl
 
   depends_on = [module.project-services]

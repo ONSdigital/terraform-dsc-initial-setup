@@ -74,7 +74,7 @@ below.
 
 | Name | Type |
 |------|------|
-| [google_secret_manager_secret.tfvars_secrets](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/secret_manager_secret) | resource |
+| [google_secret_manager_regional_secret.tfvars-secret](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/secret_manager_regional_secret) | resource |
 | [random_id.tf-state-remote-backend](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) | resource |
 
 ## Inputs
