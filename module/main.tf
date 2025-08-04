@@ -98,6 +98,10 @@ module "tf-gcs-buckets" {
     "serviceAccount:${module.tf-service-account.email}", # allow the tf cloud build service account to create objects
     "group:${var.cloud_eng_group_email}",                # required for tf state initial set-up + migration TODO: explore this further
   ]
+  viewers = [
+    "group:${var.cloud_eng_group_email}",                # allow the cloud engineering group to view the tf buckets
+    "serviceAccount:${module.tf-service-account.email}", # allow the tf cloud build service account to view objects
+  ]
 
   # enable versioning only for buckets whose suffix contains "state"
   versioning = {
