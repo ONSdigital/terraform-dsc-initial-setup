@@ -19,6 +19,14 @@ terraform {
   }
 }
 
+locals {
+  # add bespoke labels to clarify these resources are managed by this module and terraformed
+  module_labels = {
+    "terraform-managed" = "true"
+    "terraform-module"  = "terraform-dsc-initial-setup"
+  }
+}
+
 #####################
 # APIs and Services #
 #####################
@@ -61,6 +69,8 @@ resource "google_secret_manager_regional_secret" "tfvars-secret" {
   secret_id           = var.tfvars_secret_id
   location            = var.region
   version_destroy_ttl = var.tfvars_secret_version_delete_ttl
+
+  labels = local.module_labels
 
   depends_on = [module.project-services]
 }
@@ -113,11 +123,7 @@ module "tf-gcs-buckets" {
     for suffix in local.tf_bucket_suffixes : suffix => var.tf_bucket_force_destroy
   }
 
-  # add bespoke labels to clarify these buckets are managed by this module and terraformed
-  labels = {
-    "terraform-managed" = "true"
-    "source"            = "terraform-dsc-initial-setup"
-  }
+  labels = local.module_labels
 
   # disable adhoc ACLs for all buckets
   bucket_policy_only = {
