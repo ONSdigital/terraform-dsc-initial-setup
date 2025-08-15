@@ -101,6 +101,11 @@ module "tf-gcs-buckets" {
     "group:${var.cloud_eng_group_email}",                # allow the cloud engineering group to view the tf buckets
   ]
 
+  # add role bindings for the above configuration
+  set_admin_roles   = true
+  set_creator_roles = true
+  set_viewer_roles  = true
+
   # enable versioning only for buckets whose suffix contains "state"
   versioning = {
     for suffix in local.tf_bucket_suffixes : suffix => strcontains(suffix, "state-remote-backend")
