@@ -84,7 +84,7 @@ module "tf-gcs-buckets" {
   # buckets configuration parameters
   project_id               = var.project_id
   location                 = var.region
-  public_access_prevention = true # not negotiable for security - enforce public access prevention
+  public_access_prevention = "enforced" # not negotiable for security - enforce public access prevention
   storage_class            = "STANDARD"
   prefix                   = "${var.project_id}-${var.project_env}-tf"
   names                    = local.tf_bucket_suffixes
