@@ -59,7 +59,6 @@ below.
 
 | Name | Version |
 |------|---------|
-| <a name="provider_google"></a> [google](#provider\_google) | 6.46.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | 3.7.2 |
 
 ## Modules
@@ -74,7 +73,6 @@ below.
 
 | Name | Type |
 |------|------|
-| [google_secret_manager_regional_secret.tfvars-secret](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/secret_manager_regional_secret) | resource |
 | [random_id.tf-state-remote-backend](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) | resource |
 
 ## Inputs
@@ -91,8 +89,6 @@ below.
 | <a name="input_region"></a> [region](#input\_region) | The GCP region where the resources will be created. | `string` | `"europe-west2"` | no |
 | <a name="input_tf_bucket_force_destroy"></a> [tf\_bucket\_force\_destroy](#input\_tf\_bucket\_force\_destroy) | Whether to force destroy the GCS buckets, allowing deletion of non-empty buckets.<br/>Set to `true` to allow deletion of non-empty buckets (recommended for Sandbox/Dev environments only).<br/>Set to `false` to prevent deletion of non-empty buckets (recommended for Staging/Prod environments).<br/>See: https://www.terraform.io/docs/providers/google/r/storage_bucket.html#force_destroy-1 | `bool` | `false` | no |
 | <a name="input_tf_cloud_build_sa_roles"></a> [tf\_cloud\_build\_sa\_roles](#input\_tf\_cloud\_build\_sa\_roles) | List of IAM roles to assign to the Terraform Cloud Build service account. | `list(string)` | <pre>[<br/>  "roles/cloudbuild.builds.builder",<br/>  "roles/logging.logWriter",<br/>  "roles/storage.objectUser",<br/>  "roles/serviceusage.serviceUsageConsumer"<br/>]</pre> | no |
-| <a name="input_tfvars_secret_id"></a> [tfvars\_secret\_id](#input\_tfvars\_secret\_id) | The ID of the secret in Secret Manager where tfvars will be stored. | `string` | `"tfvars"` | no |
-| <a name="input_tfvars_secret_version_delete_ttl"></a> [tfvars\_secret\_version\_delete\_ttl](#input\_tfvars\_secret\_version\_delete\_ttl) | The time to live for tfvars secret versions before they are deleted. | `string` | `"1209600s"` | no |
 
 ## Outputs
 

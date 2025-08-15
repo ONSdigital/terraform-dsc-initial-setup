@@ -75,22 +75,6 @@ variable "tf_cloud_build_sa_roles" {
 }
 
 ##################
-# tfvars secrets #
-##################
-variable "tfvars_secret_id" {
-  description = "The ID of the secret in Secret Manager where tfvars will be stored."
-  type        = string
-  nullable    = false
-  default     = "tfvars"
-}
-variable "tfvars_secret_version_delete_ttl" {
-  description = "The time to live for tfvars secret versions before they are deleted."
-  type        = string
-  nullable    = true
-  default     = "1209600s"
-}
-
-##################
 # tfvars buckets #
 ##################
 variable "admins_owners_group_email" {

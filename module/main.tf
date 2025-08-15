@@ -62,20 +62,6 @@ module "tf-service-account" {
 }
 
 ##################
-# tfvars secrets #
-##################
-# no currently available gcp/terraform module for secret manager (auto-push/pull of secrets only)
-resource "google_secret_manager_regional_secret" "tfvars-secret" {
-  secret_id           = var.tfvars_secret_id
-  location            = var.region
-  version_destroy_ttl = var.tfvars_secret_version_delete_ttl
-
-  labels = local.module_labels
-
-  depends_on = [module.project-services]
-}
-
-##################
 # tf gcs buckets #
 ##################
 # use a random id to create unique bucket names
