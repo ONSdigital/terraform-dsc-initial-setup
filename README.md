@@ -57,9 +57,7 @@ below.
 
 ## Providers
 
-| Name | Version |
-|------|---------|
-| <a name="provider_random"></a> [random](#provider\_random) | 3.7.2 |
+No providers.
 
 ## Modules
 
@@ -71,9 +69,7 @@ below.
 
 ## Resources
 
-| Name | Type |
-|------|------|
-| [random_id.tf-state-remote-backend](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) | resource |
+No resources.
 
 ## Inputs
 

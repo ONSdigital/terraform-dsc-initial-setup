@@ -66,12 +66,13 @@ module "tf-service-account" {
 ##################
 # use a random id to create unique bucket names
 # https://cloud.google.com/docs/terraform/resource-management/store-state
-resource "random_id" "tf-state-remote-backend" {
-  byte_length = 8
-}
+# resource "random_id" "tf-state-remote-backend" {
+#   byte_length = 8
+# }
 # use a local variable to define the bucket suffixes, including the random id prefix for the state bucket
 locals {
-  tf_bucket_suffixes = ["${random_id.tf-state-remote-backend.hex}-state-remote-backend", "logs", "plans", "cloudbuild"]
+  # tf_bucket_suffixes = ["${random_id.tf-state-remote-backend.hex}-state-remote-backend", "logs", "plans", "cloudbuild"]
+  tf_bucket_suffixes = ["state-remote-backend", "logs", "plans", "cloudbuild"]
 }
 # create all the gcs buckets required for terraform in the gcs project
 # https://registry.terraform.io/modules/terraform-google-modules/cloud-storage/google/latest
@@ -87,6 +88,7 @@ module "tf-gcs-buckets" {
   storage_class            = "STANDARD"
   prefix                   = "${var.project_id}-${var.project_env}-tf-"
   names                    = local.tf_bucket_suffixes
+  randomize_suffix         = true # enable random suffix for bucket names
 
   # object level bindings - controlling access to the tf bucket contents
   admins = ["group:${var.admins_owners_group_email}"]
@@ -101,7 +103,7 @@ module "tf-gcs-buckets" {
 
   # enable versioning only for buckets whose suffix contains "state"
   versioning = {
-    for suffix in local.tf_bucket_suffixes : suffix => strcontains(suffix, "-state-remote-backend")
+    for suffix in local.tf_bucket_suffixes : suffix => strcontains(suffix, "state-remote-backend")
   }
 
   # set a consistent force_destroy policy for all buckets
@@ -116,5 +118,5 @@ module "tf-gcs-buckets" {
     for suffix in local.tf_bucket_suffixes : suffix => true
   }
 
-  depends_on = [module.project-services, module.tf-service-account, random_id.tf-state-remote-backend]
+  depends_on = [module.project-services, module.tf-service-account] # random_id.tf-state-remote-backend
 }
