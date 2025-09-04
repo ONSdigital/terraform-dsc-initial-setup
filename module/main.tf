@@ -90,21 +90,21 @@ module "tf-gcs-buckets" {
   names                    = local.tf_bucket_suffixes
   randomize_suffix         = true # enable random suffix for bucket names
 
-  # object level bindings - controlling access to the tf bucket contents
-  admins = ["group:${var.admins_owners_group_email}"]
-  creators = [
-    "serviceAccount:${module.tf-service-account.email}", # allow the tf cloud build service account to create objects
-    "group:${var.cloud_eng_group_email}",                # required for tf state initial set-up + migration TODO: explore this further
-  ]
-  viewers = [
-    "serviceAccount:${module.tf-service-account.email}", # allow the tf cloud build service account to view objects (required as not part of object creator)
-    "group:${var.cloud_eng_group_email}",                # allow the cloud engineering group to view the tf buckets
-  ]
+  # # object level bindings - controlling access to the tf bucket contents
+  # admins = ["group:${var.admins_owners_group_email}"]
+  # creators = [
+  #   "serviceAccount:${module.tf-service-account.email}", # allow the tf cloud build service account to create objects
+  #   "group:${var.cloud_eng_group_email}",                # required for tf state initial set-up + migration TODO: explore this further
+  # ]
+  # viewers = [
+  #   "serviceAccount:${module.tf-service-account.email}", # allow the tf cloud build service account to view objects (required as not part of object creator)
+  #   "group:${var.cloud_eng_group_email}",                # allow the cloud engineering group to view the tf buckets
+  # ]
 
-  # add role bindings for the above configuration
-  set_admin_roles   = true
-  set_creator_roles = true
-  set_viewer_roles  = true
+  # # add role bindings for the above configuration
+  # set_admin_roles   = true
+  # set_creator_roles = true
+  # set_viewer_roles  = true
 
   # enable versioning only for buckets whose suffix contains "state"
   versioning = {
@@ -124,4 +124,27 @@ module "tf-gcs-buckets" {
   }
 
   depends_on = [module.project-services, module.tf-service-account] # random_id.tf-state-remote-backend
+}
+
+data "google_iam_policy" "tf-gcs-buckets" {
+  binding {
+    role = "roles/storage.admin"
+    members = [
+      "group:${var.admins_owners_group_email}", # allow the admins/owners group to administer the tf buckets
+      "group:${var.cloud_eng_group_email}",     # allow the cloud engineering group to setup/control the tf buckets
+    ]
+  }
+  binding {
+    role = "roles/storage.objectUser"
+    members = [
+      "serviceAccount:${module.tf-service-account.email}", # allow the tf cloud build service account to create objects
+    ]
+  }
+}
+resource "google_storage_bucket_iam_policy" "tf-gcs-buckets" {
+  for_each    = { for suffix in local.tf_bucket_suffixes : suffix => suffix }
+  bucket      = module.tf-gcs-buckets.names[each.key]
+  policy_data = data.google_iam_policy.tf-gcs-buckets.policy_data
+
+  depends_on = [module.tf-gcs-buckets]
 }
