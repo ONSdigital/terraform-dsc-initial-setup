@@ -32,7 +32,6 @@ variable "additional_apis_services" {
   - cloudbuild.googleapis.com
   - cloudresourcemanager.googleapis.com
   - iam.googleapis.com
-  - secretmanager.googleapis.com
   - storage.googleapis.com
   EOF
   type        = list(string)

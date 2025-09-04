@@ -29,7 +29,6 @@ locals {
       "cloudbuild.googleapis.com",
       "cloudresourcemanager.googleapis.com",
       "iam.googleapis.com",
-      "secretmanager.googleapis.com",
       "storage.googleapis.com",
     ],
     var.additional_apis_services
