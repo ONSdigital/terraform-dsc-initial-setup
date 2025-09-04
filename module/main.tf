@@ -8,14 +8,6 @@ terraform {
       source  = "hashicorp/google"
       version = ">=6.45.0, <7.0.0"
     }
-    google-beta = {
-      source  = "hashicorp/google-beta"
-      version = ">=6.45.0, <7.0.0"
-    }
-    random = {
-      source  = "hashicorp/random"
-      version = ">= 3.7.2, < 4.0.0"
-    }
   }
 }
 
@@ -104,6 +96,7 @@ module "tf-gcs-buckets" {
   depends_on = [module.project-services, module.tf-service-account] # random_id.tf-state-remote-backend
 }
 
+# set IAM policies for the tf gcs buckets
 data "google_iam_policy" "tf-gcs-buckets" {
   binding {
     role = "roles/storage.admin"
