@@ -25,16 +25,18 @@ variable "project_env" {
 ################
 # API SERVICES #
 ################
-variable "apis_services" {
-  description = "List of APIs/services to be activated in the project, in XXXX.googleapis.com format."
+variable "additional_apis_services" {
+  description = <<EOF
+  List of additional APIs/services to be activated in the project, in XXXX.googleapis.com format.
+  The following APIs/services are always activated:
+  - cloudbuild.googleapis.com
+  - cloudresourcemanager.googleapis.com
+  - iam.googleapis.com
+  - secretmanager.googleapis.com
+  - storage.googleapis.com
+  EOF
   type        = list(string)
-  default = [
-    "cloudbuild.googleapis.com",
-    "cloudresourcemanager.googleapis.com",
-    "iam.googleapis.com",
-    "secretmanager.googleapis.com",
-    "storage.googleapis.com",
-  ]
+  default     = []
 }
 variable "disable_services_on_destroy" {
   description = <<EOF
