@@ -49,6 +49,16 @@ module "project-services" {
 #######
 # terraform cloud build service account
 # https://registry.terraform.io/modules/terraform-google-modules/service-accounts/google/latest
+locals {
+  tf_cloud_build_sa_roles = distinct(concat(
+    [
+      "roles/cloudbuild.builds.builder",
+      "roles/logging.logWriter",
+      "roles/serviceusage.serviceUsageConsumer",
+    ],
+    var.additional_tf_cloud_build_sa_roles
+  ))
+}
 module "tf-service-account" {
   source       = "terraform-google-modules/service-accounts/google"
   version      = "~> 4.0"
@@ -56,7 +66,7 @@ module "tf-service-account" {
   names        = ["tf-cloud-build"]
   descriptions = ["Terraform Cloud Build Service Account"]
   project_roles = [
-    for role in var.tf_cloud_build_sa_roles : "${var.project_id}=>${role}" # assign roles to the same project
+    for role in local.tf_cloud_build_sa_roles : "${var.project_id}=>${role}" # assign roles to the same project
   ]
 
   depends_on = [module.project-services]

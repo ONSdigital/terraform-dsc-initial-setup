@@ -64,16 +64,17 @@ EOF
 #######
 # IAM #
 #######
-variable "tf_cloud_build_sa_roles" {
-  description = "List of IAM roles to assign to the Terraform Cloud Build service account."
+variable "additional_tf_cloud_build_sa_roles" {
+  description = <<EOF
+  List of additional IAM roles to assign to the Terraform Cloud Build service account.
+  The following roles are always assigned:
+  - roles/cloudbuild.builds.builder
+  - roles/logging.logWriter
+  - roles/serviceusage.serviceUsageConsumer
+  EOF
   type        = list(string)
   nullable    = false
-  default = [
-    "roles/cloudbuild.builds.builder",
-    "roles/logging.logWriter",
-    "roles/storage.objectUser",
-    "roles/serviceusage.serviceUsageConsumer",
-  ]
+  default     = []
 }
 
 ##################
