@@ -1,4 +1,5 @@
 # terraform-dsc-initial-setup
+
 An opinionated terraform module to perform common GCP project set-up tasks,
 including:
 - Enabling APIs and services
@@ -8,37 +9,56 @@ including:
     - GCS buckets for Terraform state remote backend and Cloud Build artifacts
     (including logs, plans, and sources), all with object IAM bindings to
     control access.
-    - Secret Manager secret for tfvars variables.
 
 ## Installation
 
 🚧 *To be added* 🚧
 
+## Features
+
+- **APIs and Services**: Enables a core set of APIs and services, with the
+option to add more. The core set includes:
+  - Cloud Build API
+  - Cloud Resource Manager API
+  - IAM API
+  - Cloud Storage API
+
+- **Terraform Service Account**: Creates a service account for usage with
+Terraform Cloud Build workflows. This has an initial set of least privilege IAM
+roles, with the option to add more. The core roles include:
+  - Cloud Build Service Account (roles/cloudbuild.builds.builder)
+  - Logs Writer (roles/logging.logWriter)
+  - Service Usage Consumer (roles/serviceusage.serviceUsageConsumer)
+
+- **Terraform GCS**: Creates GCS buckets for Terraform state remote backend and
+Terraform Cloud Build artifacts (including logs, plans, and source artifacts).
+Key points include:
+  - Logs, plans, and cloudbuild buckets uses autoclass and lifecycle rules to help
+  manage storage costs over time (logs are auto-deleted after 365 days, plans/cloudbuild artifacts after 90 days).
+  - The state-remote-backend bucket uses versioning to help protect against
+  accidental deletions or overwrites of state files, and allows for older
+  versions to be restored if needed.
+  - All terraform buckets are subject to a strict IAM policy, granting:
+    - Bucket Admin permissions to the admin/owners and cloud engineering Google
+    Groups.
+    - The Terraform Cloud Build service account Object user permissions (to
+    allow it to read/write objects in the buckets).
+    - No other principals/uses will be able to have access to these buckets.
+
 ## Usage
 
-A skeleton for the basic usage of this module would look like:
+A basic usage of this module (accepting the optional parameters with default
+values) would look like:
 
 ```hcl
-module "terraform-dsc-initial-setup" {
-  source = "path/to/module"
-  project_id = "<PROJECT-ID>"
+module "setup" {
+  source      = "path/to/module"
+  project_id  = "<PROJECT-ID>"
   project_env = "<PROJECT_ENV>" # e.g., sandbox, dev, staging, prod
-  region = "<REGION>" # region where all resources will be created
-  admins_owners_group_email = "<ADMINS-OWNERS-GOOGLE-GROUP-EMAIL>" # get object admin role on all tf buckets
-  cloud_eng_group_email = "<CLOUD-ENG-GOOGLE-GROUP-EMAIL>" # get object creator role on all tf buckets
-  apis_services = [ # List of APIs/services to be activated in the project, in XXXX.googleapis.com format.
-    "cloudbuild.googleapis.com",
-    "cloudresourcemanager.googleapis.com",
-    "iam.googleapis.com",
-    "secretmanager.googleapis.com",
-    "storage.googleapis.com"
-  ]
-  tf_cloud_build_sa_roles = [ # List of IAM roles to assign to the Terraform Cloud Build service account.
-    "roles/cloudbuild.builds.builder",
-    "roles/logging.logWriter",
-    "roles/storage.objectUser",
-    "roles/serviceusage.serviceUsageConsumer"
-  ]
+
+  # used to setup the terraform bucket IAM policies
+  admins_owners_group_email = "<ADMINS-OWNERS-GOOGLE-GROUP-EMAIL>"
+  cloud_eng_group_email     = "<CLOUD-ENG-GOOGLE-GROUP-EMAIL>"
 }
 ```
 
