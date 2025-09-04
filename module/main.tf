@@ -56,13 +56,24 @@ module "tf-service-account" {
 ##################
 # tf gcs buckets #
 ##################
-# use a local variable to define the bucket suffixes, including the random id prefix for the state bucket
+# use a local variable to define the terraform bucket suffixes and lifecycle rules
 locals {
-  tf_bucket_suffixes = ["state-remote-backend", "logs", "plans", "cloudbuild"]
+  tf_buckets_suffixes = [
+    "state-remote-backend", # for terraform remote state storage
+    "logs",                 # for storing terraform logs
+    "plans",                # for storing terraform plan outputs
+    "cloudbuild",           # for storing cloud build artifacts
+  ]
+  # set no lifecycle rules for the state bucket, this is done through versioning
+  # must be separate local as an empty set object causes the module to error
+  tf_buckets_lifecycle_rules = {
+    "logs"       = [{ action = { type = "Delete" }, condition = { age = 365 } }]
+    "plans"      = [{ action = { type = "Delete" }, condition = { age = 90 } }]
+    "cloudbuild" = [{ action = { type = "Delete" }, condition = { age = 90 } }]
+  }
 }
 # create all the gcs buckets required for terraform in the gcs project
 # https://registry.terraform.io/modules/terraform-google-modules/cloud-storage/google/latest
-# TODO: define lifcycle rules (including prevent destroying, auto-deletion after X period as needed) and soft delete policies for the tf buckets
 module "tf-gcs-buckets" {
   source  = "terraform-google-modules/cloud-storage/google"
   version = "~> 11.0"
@@ -73,25 +84,29 @@ module "tf-gcs-buckets" {
   public_access_prevention = "enforced" # not negotiable for security - enforce public access prevention
   storage_class            = "STANDARD"
   prefix                   = "${var.project_id}-${var.project_env}-tf"
-  names                    = local.tf_bucket_suffixes
+  names                    = local.tf_buckets_suffixes
   randomize_suffix         = true # enable random suffix for bucket names
 
   # enable versioning only for buckets whose suffix contains "state"
   versioning = {
-    for suffix in local.tf_bucket_suffixes : suffix => strcontains(suffix, "state-remote-backend")
+    for suffix in local.tf_buckets_suffixes : suffix => strcontains(suffix, "state-remote-backend")
   }
 
   # set a consistent force_destroy policy for all buckets
   force_destroy = {
-    for suffix in local.tf_bucket_suffixes : suffix => var.tf_bucket_force_destroy
+    for suffix in local.tf_buckets_suffixes : suffix => var.tf_bucket_force_destroy
   }
 
+  # add specific labels to all buckets
   labels = local.module_labels
 
   # disable adhoc ACLs for all buckets
   bucket_policy_only = {
-    for suffix in local.tf_bucket_suffixes : suffix => true
+    for suffix in local.tf_buckets_suffixes : suffix => true
   }
+
+  # add lifecycle rules
+  bucket_lifecycle_rules = local.tf_buckets_lifecycle_rules
 
   depends_on = [module.project-services, module.tf-service-account] # random_id.tf-state-remote-backend
 }
@@ -113,7 +128,7 @@ data "google_iam_policy" "tf-gcs-buckets" {
   }
 }
 resource "google_storage_bucket_iam_policy" "tf-gcs-buckets" {
-  for_each    = { for suffix in local.tf_bucket_suffixes : suffix => suffix }
+  for_each    = { for suffix in local.tf_buckets_suffixes : suffix => suffix }
   bucket      = module.tf-gcs-buckets.names[each.key]
   policy_data = data.google_iam_policy.tf-gcs-buckets.policy_data
 
