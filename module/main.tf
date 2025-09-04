@@ -12,7 +12,7 @@ terraform {
 }
 
 locals {
-  # add bespoke labels to clarify these resources are managed by this module and terraformed
+  # add bespoke labels to clarify these resources are managed by this module and are terraformed
   module_labels = {
     "terraform-managed" = "true"
     "terraform-module"  = "terraform-dsc-initial-setup"
@@ -76,7 +76,6 @@ module "tf-service-account" {
 ##################
 # tf gcs buckets #
 ##################
-# use a local variable to define the terraform bucket suffixes and lifecycle rules
 locals {
   tf_buckets_suffixes = [
     "state-remote-backend", # for terraform remote state storage
@@ -106,32 +105,28 @@ module "tf-gcs-buckets" {
   prefix                   = "${var.project_id}-${var.project_env}-tf"
   names                    = local.tf_buckets_suffixes
   randomize_suffix         = true # enable random suffix for bucket names
+  labels                   = local.module_labels
 
-  # enable versioning only for buckets whose suffix contains "state"
-  versioning = {
-    for suffix in local.tf_buckets_suffixes : suffix => strcontains(suffix, "state-remote-backend")
-  }
-
-  # set a consistent force_destroy policy for all buckets
+  # set a consistent force_destroy policy and disable adhoc ACLs for all terraform buckets
   force_destroy = {
     for suffix in local.tf_buckets_suffixes : suffix => var.tf_bucket_force_destroy
   }
-
-  # add specific labels to all buckets
-  labels = local.module_labels
-
-  # disable adhoc ACLs for all buckets
   bucket_policy_only = {
     for suffix in local.tf_buckets_suffixes : suffix => true
   }
 
-  # add lifecycle rules
-  bucket_lifecycle_rules = local.tf_buckets_lifecycle_rules
+  # enable versioning only for the state-remote-backend bucket (as a recovery mechanism)
+  versioning = {
+    for suffix in local.tf_buckets_suffixes : suffix => strcontains(suffix, "state-remote-backend")
+  }
 
   # set autoclass to true for all buckets except the state-remote-backend bucket (help minimise costs over time)
   autoclass = {
     for suffix in local.tf_buckets_suffixes : suffix => !strcontains(suffix, "state-remote-backend")
   }
+
+  # add lifecycle rules as defined in the local (control storage costs and data retention)
+  bucket_lifecycle_rules = local.tf_buckets_lifecycle_rules
 
   depends_on = [module.project-services, module.tf-service-account] # random_id.tf-state-remote-backend
 }
