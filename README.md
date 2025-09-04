@@ -33,8 +33,11 @@ roles, with the option to add more. The core roles include:
 - **Terraform GCS**: Creates GCS buckets for Terraform state remote backend and
 Terraform Cloud Build artifacts (including logs, plans, and source artifacts).
 Key points include:
-  - Logs, plans, and cloudbuild buckets uses autoclass and lifecycle rules to help
-  manage storage costs over time (logs are auto-deleted after 365 days, plans/cloudbuild artifacts after 90 days).
+  - Terraform logs, plans, and cloudbuild buckets uses autoclass (auto-changing
+  object storage classes towards archive storage over time) and object
+  lifecycle rules (logs are auto-deleted after 365 days, plans/cloudbuild
+  artifacts after 90 days) to help manage storage costs and improve data
+  retention practices.
   - The state-remote-backend bucket uses versioning to help protect against
   accidental deletions or overwrites of state files, and allows for older
   versions to be restored if needed.
@@ -43,7 +46,7 @@ Key points include:
     Groups.
     - The Terraform Cloud Build service account Object user permissions (to
     allow it to read/write objects in the buckets).
-    - No other principals/uses will be able to have access to these buckets.
+    - No other principals/users will be able to have access to these buckets.
 
 ## Usage
 
