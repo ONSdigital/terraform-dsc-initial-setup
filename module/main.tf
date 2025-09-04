@@ -129,7 +129,7 @@ module "tf-gcs-buckets" {
   # add lifecycle rules
   bucket_lifecycle_rules = local.tf_buckets_lifecycle_rules
 
-  # set autoclass to true for all buckets except the state-remote-backend bucket
+  # set autoclass to true for all buckets except the state-remote-backend bucket (help minimise costs over time)
   autoclass = {
     for suffix in local.tf_buckets_suffixes : suffix => !strcontains(suffix, "state-remote-backend")
   }
