@@ -64,14 +64,8 @@ module "tf-service-account" {
 ##################
 # tf gcs buckets #
 ##################
-# use a random id to create unique bucket names
-# https://cloud.google.com/docs/terraform/resource-management/store-state
-# resource "random_id" "tf-state-remote-backend" {
-#   byte_length = 8
-# }
 # use a local variable to define the bucket suffixes, including the random id prefix for the state bucket
 locals {
-  # tf_bucket_suffixes = ["${random_id.tf-state-remote-backend.hex}-state-remote-backend", "logs", "plans", "cloudbuild"]
   tf_bucket_suffixes = ["state-remote-backend", "logs", "plans", "cloudbuild"]
 }
 # create all the gcs buckets required for terraform in the gcs project
@@ -89,22 +83,6 @@ module "tf-gcs-buckets" {
   prefix                   = "${var.project_id}-${var.project_env}-tf"
   names                    = local.tf_bucket_suffixes
   randomize_suffix         = true # enable random suffix for bucket names
-
-  # # object level bindings - controlling access to the tf bucket contents
-  # admins = ["group:${var.admins_owners_group_email}"]
-  # creators = [
-  #   "serviceAccount:${module.tf-service-account.email}", # allow the tf cloud build service account to create objects
-  #   "group:${var.cloud_eng_group_email}",                # required for tf state initial set-up + migration TODO: explore this further
-  # ]
-  # viewers = [
-  #   "serviceAccount:${module.tf-service-account.email}", # allow the tf cloud build service account to view objects (required as not part of object creator)
-  #   "group:${var.cloud_eng_group_email}",                # allow the cloud engineering group to view the tf buckets
-  # ]
-
-  # # add role bindings for the above configuration
-  # set_admin_roles   = true
-  # set_creator_roles = true
-  # set_viewer_roles  = true
 
   # enable versioning only for buckets whose suffix contains "state"
   versioning = {
