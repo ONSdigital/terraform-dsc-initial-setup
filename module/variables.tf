@@ -84,11 +84,21 @@ variable "admins_owners_group_email" {
   type        = string
   nullable    = false
 }
-variable "cloud_eng_group_email" {
-  description = "Google group email of the cloud engineering team that will have object creator access to the terraform GCS buckets."
-  type        = string
+
+variable "gcs_object_users" {
+  description = "List of principals (user, serviceAccount, group, or domain) to grant read-only access. Each entry must be in the form: user:email, serviceAccount:email, group:email, or domain:domain."
+  type        = list(string)
   nullable    = false
-}
+  default     = []
+  validation {
+    condition = alltrue([
+      for v in var.gcs_object_users :
+      can(regex("^(user:[^@]+@[^@]+|serviceAccount:[^@]+@[^@]+|group:[^@]+@[^@]+|domain:[a-zA-Z0-9.-]+)$", v))
+    ])
+    error_message = "Each entry must be: user:email, serviceAccount:email, group:email, or domain:domain."
+  }
+
+
 variable "tf_bucket_force_destroy" {
   description = <<EOF
 Whether to force destroy the GCS buckets, allowing deletion of non-empty buckets.

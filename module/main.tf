@@ -49,7 +49,6 @@ module "project-services" {
 # IAM #
 #######
 # terraform cloud build service account
-# https://registry.terraform.io/modules/terraform-google-modules/service-accounts/google/latest
 locals {
   tf_cloud_build_sa_roles = distinct(concat(
     [
@@ -60,6 +59,7 @@ locals {
     var.additional_tf_cloud_build_sa_roles
   ))
 }
+# https://registry.terraform.io/modules/terraform-google-modules/service-accounts/google/latest
 module "tf-service-account" {
   source       = "terraform-google-modules/service-accounts/google"
   version      = "~> 4.0"
@@ -132,21 +132,27 @@ module "tf-gcs-buckets" {
 }
 
 # set IAM policies for the tf gcs buckets
+locals {
+  gcs_object_users = distinct(concat([
+    "serviceAccount:${module.tf-service-account.email}",
+    var.gcs_object_users,
+  ]))
+} 
+# https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/iam_policy
 data "google_iam_policy" "tf-gcs-buckets" {
   binding {
     role = "roles/storage.admin"
     members = [
       "group:${var.admins_owners_group_email}", # allow the admins/owners group to administer the tf buckets
-      "group:${var.cloud_eng_group_email}",     # allow the cloud engineering group to setup/control the tf buckets
     ]
   }
   binding {
     role = "roles/storage.objectUser"
-    members = [
-      "serviceAccount:${module.tf-service-account.email}", # allow the tf cloud build service account to create objects
-    ]
+    members = [for user in local.gcs_object_users : user]
   }
 }
+
+# https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket_iam.html
 resource "google_storage_bucket_iam_policy" "tf-gcs-buckets" {
   for_each    = { for suffix in local.tf_buckets_suffixes : suffix => suffix }
   bucket      = module.tf-gcs-buckets.names[each.key]
