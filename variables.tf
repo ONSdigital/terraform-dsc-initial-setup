@@ -12,15 +12,6 @@ variable "region" {
   nullable    = false
   default     = "europe-west2"
 }
-variable "project_env" {
-  description = "The environment of the project (e.g., sandbox, dev, staging, prod)."
-  type        = string
-  nullable    = false
-  validation {
-    condition     = can(regex("^(sandbox|dev|staging|prod)$", var.project_env))
-    error_message = "project_env must be one of: sandbox, dev, staging, prod."
-  }
-}
 
 ################
 # API SERVICES #

@@ -102,9 +102,9 @@ module "tf-gcs-buckets" {
   location                 = var.region
   public_access_prevention = "enforced" # not negotiable for security - enforce public access prevention
   storage_class            = "STANDARD"
-  prefix                   = "${var.project_id}-${var.project_env}-tf"
+  prefix                   = "${var.project_id}-tf"
   names                    = local.tf_buckets_suffixes
-  randomize_suffix         = true # enable random suffix for bucket names
+  randomize_suffix         = false # disable random suffix for bucket names
   labels                   = local.module_labels
 
   # set a consistent force_destroy policy and disable adhoc ACLs for all terraform buckets
