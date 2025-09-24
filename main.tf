@@ -78,10 +78,10 @@ module "tf-service-account" {
 ##################
 locals {
   tf_buckets_suffixes = [
-    "state-remote-backend", # for terraform remote state storage
-    "logs",                 # for storing terraform logs
-    "plans",                # for storing terraform plan outputs
-    "cloudbuild",           # for storing cloud build artifacts
+    "state",      # for terraform remote state storage
+    "logs",       # for storing terraform logs
+    "plans",      # for storing terraform plan outputs
+    "cloudbuild", # for storing cloud build artifacts
   ]
   # set no lifecycle rules for the state bucket, this is done through versioning
   # must be separate local as an empty set object causes the module to error
