@@ -44,13 +44,13 @@ repos:
     hooks:
       - id: terraform-docs-go
         name: terraform-docs (module)
-        files: ^module/
+        language_version: "1.24.6"
         args:
           - "markdown"
           - "table"
           - "--output-file"
-          - "../README.md"
-          - "./module"
+          - "README.md"
+          - "."
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.12.7

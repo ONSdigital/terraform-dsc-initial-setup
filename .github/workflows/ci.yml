@@ -31,6 +31,13 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         python -m pip install -r requirements.txt
+    - name: Cache pre-commits
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/pre-commit
+        key: ${{ runner.os }}-precommit-${{ hashFiles('.pre-commit-config.yaml') }}
+
+
     - name: Install terraform
       uses: hashicorp/setup-terraform@v3
       with:

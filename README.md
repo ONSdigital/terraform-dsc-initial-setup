@@ -80,7 +80,7 @@ below.
 
 | Name | Version |
 |------|---------|
-| <a name="provider_google"></a> [google](#provider\_google) | >=6.45.0, <7.0.0 |
+| <a name="provider_google"></a> [google](#provider\_google) | 6.50.0 |
 
 ## Modules
 
