@@ -134,9 +134,9 @@ module "tf-gcs-buckets" {
 # set IAM policies for the tf gcs buckets
 locals {
   gcs_object_users = distinct(concat([
-    "serviceAccount:${module.tf-service-account.email}",
+    "serviceAccount:${module.tf-service-account.email}"],
     var.gcs_object_users,
-  ]))
+  ))
 }
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/iam_policy
 data "google_iam_policy" "tf-gcs-buckets" {
