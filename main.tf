@@ -147,7 +147,7 @@ data "google_iam_policy" "tf-gcs-buckets" {
     ]
   }
   binding {
-    role = "roles/storage.objectUser"
+    role    = "roles/storage.objectUser"
     members = [for user in local.gcs_object_users : user]
   }
 }
