@@ -80,7 +80,7 @@ below.
 
 | Name | Version |
 |------|---------|
-| <a name="provider_google"></a> [google](#provider\_google) | 6.46.0 |
+| <a name="provider_google"></a> [google](#provider\_google) | >=6.45.0, <7.0.0 |
 
 ## Modules
 
@@ -104,9 +104,9 @@ below.
 | <a name="input_additional_apis_services"></a> [additional\_apis\_services](#input\_additional\_apis\_services) | List of additional APIs/services to be activated in the project, in XXXX.googleapis.com format.<br/>  The following APIs/services are always activated:<br/>  - cloudbuild.googleapis.com<br/>  - cloudresourcemanager.googleapis.com<br/>  - iam.googleapis.com<br/>  - storage.googleapis.com | `list(string)` | `[]` | no |
 | <a name="input_additional_tf_cloud_build_sa_roles"></a> [additional\_tf\_cloud\_build\_sa\_roles](#input\_additional\_tf\_cloud\_build\_sa\_roles) | List of additional IAM roles to assign to the Terraform Cloud Build service account.<br/>  The following roles are always assigned:<br/>  - roles/cloudbuild.builds.builder<br/>  - roles/logging.logWriter<br/>  - roles/serviceusage.serviceUsageConsumer | `list(string)` | `[]` | no |
 | <a name="input_admins_owners_group_email"></a> [admins\_owners\_group\_email](#input\_admins\_owners\_group\_email) | Google group email of the that will have object admin access to the terraform GCS buckets. | `string` | n/a | yes |
-| <a name="input_cloud_eng_group_email"></a> [cloud\_eng\_group\_email](#input\_cloud\_eng\_group\_email) | Google group email of the cloud engineering team that will have object creator access to the terraform GCS buckets. | `string` | n/a | yes |
 | <a name="input_disable_dependent_services"></a> [disable\_dependent\_services](#input\_disable\_dependent\_services) | Whether to disable dependent services when a service is disabled.<br/>Set to `true` to disable dependent services.<br/>Set to `false` to leave dependent services enabled.<br/>See: https://www.terraform.io/docs/providers/google/r/google_project_service.html#disable_dependent_services | `bool` | `true` | no |
 | <a name="input_disable_services_on_destroy"></a> [disable\_services\_on\_destroy](#input\_disable\_services\_on\_destroy) | Whether to disable services on destroy.<br/>Set to `true` to disable services when the module is destroyed.<br/>Set to `false` to leave services enabled (removed from state only).<br/>See: https://www.terraform.io/docs/providers/google/r/google_project_service.html#disable_on_destroy | `bool` | `false` | no |
+| <a name="input_gcs_object_users"></a> [gcs\_object\_users](#input\_gcs\_object\_users) | List of principals (user, serviceAccount, group, or domain) to grant read-only access. Each entry must be in the form: user:email, serviceAccount:email, group:email, or domain:domain. | `list(string)` | `[]` | no |
 | <a name="input_project_env"></a> [project\_env](#input\_project\_env) | The environment of the project (e.g., sandbox, dev, staging, prod). | `string` | n/a | yes |
 | <a name="input_project_id"></a> [project\_id](#input\_project\_id) | The GCP project ID where the services will be activated. | `string` | n/a | yes |
 | <a name="input_region"></a> [region](#input\_region) | The GCP region where the resources will be created. | `string` | `"europe-west2"` | no |

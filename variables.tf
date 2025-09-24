@@ -97,6 +97,7 @@ variable "gcs_object_users" {
     ])
     error_message = "Each entry must be: user:email, serviceAccount:email, group:email, or domain:domain."
   }
+}
 
 
 variable "tf_bucket_force_destroy" {

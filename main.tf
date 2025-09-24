@@ -141,7 +141,7 @@ locals {
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/iam_policy
 data "google_iam_policy" "tf-gcs-buckets" {
   binding {
-    role = "roles/storage.admin"
+    role    = "roles/storage.admin"
     members = [
       "group:${var.admins_owners_group_email}", # allow the admins/owners group to administer the tf buckets
     ]
