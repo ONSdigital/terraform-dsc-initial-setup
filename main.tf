@@ -23,24 +23,18 @@ locals {
 # APIs and Services #
 #####################
 # https://registry.terraform.io/modules/terraform-google-modules/project-factory/google/latest/submodules/project_services
-locals {
-  activate_apis = distinct(concat(
-    [
-      "cloudbuild.googleapis.com",
-      "cloudresourcemanager.googleapis.com",
-      "iam.googleapis.com",
-      "storage.googleapis.com",
-    ],
-    var.additional_apis_services
-  ))
-}
 module "project-services" {
   source  = "terraform-google-modules/project-factory/google//modules/project_services"
   version = "~> 18.0.0"
 
   project_id = var.project_id
 
-  activate_apis               = local.activate_apis
+  activate_apis = [
+    "cloudbuild.googleapis.com",
+    "cloudresourcemanager.googleapis.com",
+    "iam.googleapis.com",
+    "storage.googleapis.com",
+  ]
   disable_services_on_destroy = var.disable_services_on_destroy
   disable_dependent_services  = var.disable_dependent_services
 }

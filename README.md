@@ -10,14 +10,9 @@ including:
     (including logs, plans, and sources), all with object IAM bindings to
     control access.
 
-## Installation
-
-🚧 *To be added* 🚧
-
 ## Features
 
-- **APIs and Services**: Enables a core set of APIs and services, with the
-option to add more. The core set includes:
+- **APIs and Services**: Enables a core set of APIs and services:
   - Cloud Build API
   - Cloud Resource Manager API
   - IAM API
@@ -101,7 +96,6 @@ below.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_additional_apis_services"></a> [additional\_apis\_services](#input\_additional\_apis\_services) | List of additional APIs/services to be activated in the project, in XXXX.googleapis.com format.<br/>  The following APIs/services are always activated:<br/>  - cloudbuild.googleapis.com<br/>  - cloudresourcemanager.googleapis.com<br/>  - iam.googleapis.com<br/>  - storage.googleapis.com | `list(string)` | `[]` | no |
 | <a name="input_additional_tf_cloud_build_sa_roles"></a> [additional\_tf\_cloud\_build\_sa\_roles](#input\_additional\_tf\_cloud\_build\_sa\_roles) | List of additional IAM roles to assign to the Terraform Cloud Build service account.<br/>  The following roles are always assigned:<br/>  - roles/cloudbuild.builds.builder<br/>  - roles/logging.logWriter<br/>  - roles/serviceusage.serviceUsageConsumer | `list(string)` | `[]` | no |
 | <a name="input_admins_owners_group_email"></a> [admins\_owners\_group\_email](#input\_admins\_owners\_group\_email) | Google group email of the that will have object admin access to the terraform GCS buckets. | `string` | n/a | yes |
 | <a name="input_disable_dependent_services"></a> [disable\_dependent\_services](#input\_disable\_dependent\_services) | Whether to disable dependent services when a service is disabled.<br/>Set to `true` to disable dependent services.<br/>Set to `false` to leave dependent services enabled.<br/>See: https://www.terraform.io/docs/providers/google/r/google_project_service.html#disable_dependent_services | `bool` | `true` | no |

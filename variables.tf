@@ -16,18 +16,6 @@ variable "region" {
 ################
 # API SERVICES #
 ################
-variable "additional_apis_services" {
-  description = <<EOF
-  List of additional APIs/services to be activated in the project, in XXXX.googleapis.com format.
-  The following APIs/services are always activated:
-  - cloudbuild.googleapis.com
-  - cloudresourcemanager.googleapis.com
-  - iam.googleapis.com
-  - storage.googleapis.com
-  EOF
-  type        = list(string)
-  default     = []
-}
 variable "disable_services_on_destroy" {
   description = <<EOF
 Whether to disable services on destroy.
@@ -89,7 +77,6 @@ variable "gcs_object_users" {
     error_message = "Each entry must be: user:email, serviceAccount:email, group:email, or domain:domain."
   }
 }
-
 
 variable "tf_bucket_force_destroy" {
   description = <<EOF
