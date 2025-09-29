@@ -68,6 +68,17 @@ module "tf-service-account" {
   depends_on = [module.project-services]
 }
 
+# Grant KMS CryptoKey Encrypter/Decrypter to the GCS service agent
+data "google_project" "project" {
+  project_id = var.project_id
+}
+
+resource "google_kms_crypto_key_iam_member" "gcs_service_agent" {
+  crypto_key_id = google_kms_crypto_key.tf-kms-crypto-key.id
+  role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
+  member        = "serviceAccount:service-${data.google_project.project.number}@gs-project-accounts.iam.gserviceaccount.com"
+}
+
 ##################
 # tf gcs buckets #
 ##################
