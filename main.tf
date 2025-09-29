@@ -31,9 +31,10 @@ module "project-services" {
 
   activate_apis = [
     "cloudbuild.googleapis.com",
+    "cloudkms.googleapis.com",
     "cloudresourcemanager.googleapis.com",
     "iam.googleapis.com",
-    "storage.googleapis.com",
+    "storage.googleapis.com"
   ]
   disable_services_on_destroy = var.disable_services_on_destroy
   disable_dependent_services  = var.disable_dependent_services
