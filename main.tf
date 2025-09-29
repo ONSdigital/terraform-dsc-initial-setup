@@ -84,6 +84,10 @@ locals {
     "plans"      = [{ action = { type = "Delete" }, condition = { age = 90 } }]
     "cloudbuild" = [{ action = { type = "Delete" }, condition = { age = 90 } }]
   }
+  tf_encryption_key_names = {
+    for suffix in local.tf_buckets_suffixes :
+    suffix => "projects/${var.project_id}/locations/${var.region}/keyRings/tf-key-ring/cryptoKeys/tf-crypto-key"
+  }
 }
 # create all the gcs buckets required for terraform in the gcs project
 # https://registry.terraform.io/modules/terraform-google-modules/cloud-storage/google/latest
@@ -108,6 +112,9 @@ module "tf-gcs-buckets" {
   bucket_policy_only = {
     for suffix in local.tf_buckets_suffixes : suffix => true
   }
+
+  # set encryption keys for all buckets
+  encryption_key_names = local.tf_encryption_key_names
 
   # enable versioning only for the state-remote-backend bucket (as a recovery mechanism)
   versioning = {
@@ -153,4 +160,25 @@ resource "google_storage_bucket_iam_policy" "tf-gcs-buckets" {
   policy_data = data.google_iam_policy.tf-gcs-buckets.policy_data
 
   depends_on = [module.tf-gcs-buckets]
+}
+
+
+resource "google_kms_key_ring" "tf-kms-key-ring" {
+  name     = "tf-key-ring"
+  location = var.region
+  project  = var.project_id
+}
+
+resource "google_kms_crypto_key" "tf-kms-crypto-key" {
+  name            = "tf-crypto-key"
+  key_ring        = google_kms_key_ring.tf-kms-key-ring.id
+  purpose         = "ENCRYPT_DECRYPT"
+  rotation_period = var.kms_key_rotation_period
+
+  lifecycle {
+    prevent_destroy = true
+  }
+
+  labels     = local.module_labels
+  depends_on = [module.project-services]
 }

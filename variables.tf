@@ -89,3 +89,15 @@ EOF
   nullable    = false
   default     = false
 }
+
+variable "kms_key_rotation_period" {
+  description = <<EOF
+The rotation period for the KMS key ring.
+Must be at least 24 hours (86,400 seconds) and at most 876,000 hours (100 years, 315,360,000 seconds).
+Specify as a duration in seconds, e.g., "2592000s" for 30 days (2,592,000 seconds = 720 hours).
+Defaults to 30 days.
+EOF
+  type        = string
+  nullable    = false
+  default     = "2592000s" # 30 days
+}
