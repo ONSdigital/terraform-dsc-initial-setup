@@ -70,7 +70,7 @@ variable "additional_tf_cloud_build_sa_roles" {
 ##################
 # tfvars buckets #
 ##################
-variable "admins_owners_group_email" {
+variable "storage_admin_group" {
   description = "Google group email of the that will have object admin access to the terraform GCS buckets."
   type        = string
   nullable    = false
