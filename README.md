@@ -1,67 +1,43 @@
+
 # terraform-dsc-initial-setup
 
-An opinionated terraform module to perform common GCP project set-up tasks,
-including:
-- Enabling APIs and services
-- Creating and managing:
-    - A Terraform Cloud Build service account (for planning/applying in Cloud
-    Build), with least privilege IAM roles.
-    - GCS buckets for Terraform state remote backend and Cloud Build artifacts
-    (including logs, plans, and sources), all with object IAM bindings to
-    control access.
+This Terraform module provides a secure, opinionated setup for Google Cloud Platform (GCP) projects, automating:
+
+- Enabling core GCP APIs
+- Creating a least-privilege Terraform Cloud Build service account
+- Provisioning and securing GCS buckets for Terraform state and CI/CD artifacts
+- Managing KMS key rings and crypto keys for bucket encryption
+- Granting required permissions to service accounts and groups
 
 ## Features
 
-- **APIs and Services**: Enables a core set of APIs and services:
-  - Cloud Build API
-  - Cloud Resource Manager API
-  - IAM API
-  - Cloud Storage API
+- **API Enablement**: Automatically enables Cloud Build, Cloud KMS, Cloud Resource Manager, IAM, and Cloud Storage APIs for your project.
 
-- **Terraform Service Account**: Creates a service account for usage with
-Terraform Cloud Build workflows. This has an initial set of least privilege IAM
-roles, with the option to add more. The core roles include:
-  - Cloud Build Service Account (roles/cloudbuild.builds.builder)
-  - Logs Writer (roles/logging.logWriter)
-  - Service Usage Consumer (roles/serviceusage.serviceUsageConsumer)
+- **Terraform Cloud Build Service Account**: Creates a dedicated service account for Terraform operations in Cloud Build, with core and optional IAM roles.
 
-- **Terraform GCS**: Creates GCS buckets for Terraform state remote backend and
-Terraform Cloud Build artifacts (including logs, plans, and source artifacts).
-Key points include:
-  - Terraform logs, plans, and cloudbuild buckets uses autoclass (auto-changing
-  object storage classes towards archive storage over time) and object
-  lifecycle rules (logs are auto-deleted after 365 days, plans/cloudbuild
-  artifacts after 90 days) to help manage storage costs and improve data
-  retention practices.
-  - The state-remote-backend bucket uses versioning to help protect against
-  accidental deletions or overwrites of state files, and allows for older
-  versions to be restored if needed.
-  - All terraform buckets are subject to a strict IAM policy, granting:
-    - Bucket Admin permissions to the admin/owners and cloud engineering Google
-    Groups.
-    - The Terraform Cloud Build service account Object user permissions (to
-    allow it to read/write objects in the buckets).
-    - No other principals/users will be able to have access to these buckets.
+- **GCS Buckets for Terraform**: Provisions buckets for state, logs, plans, and build artifacts. Features:
+  - Strict IAM policies (admin and object user roles)
+  - Autoclass and lifecycle rules for cost and retention
+  - Versioning for state bucket
+  - CMEK encryption with a managed KMS key
+
+- **KMS Key Management**: Creates a KMS key ring and crypto key for bucket encryption, with configurable rotation period and enforced usage by GCS.
+
+- **IAM Policy Management**: Assigns roles to groups and service accounts for secure, least-privilege access.
 
 ## Usage
 
-A basic usage of this module (accepting the optional parameters with default
-values) would look like:
+Minimal example:
 
 ```hcl
 module "setup" {
-  source      = "path/to/module"
-  project_id  = "<PROJECT-ID>"
-  project_env = "<PROJECT_ENV>" # e.g., sandbox, dev, staging, prod
+  source     = "path/to/module"
+  version    = "x.x.x"
+  project_id = "my-gcp-project"
 
-  # used to setup the terraform bucket IAM policies
-  admins_owners_group_email = "<ADMINS-OWNERS-GOOGLE-GROUP-EMAIL>"
-  cloud_eng_group_email     = "<CLOUD-ENG-GOOGLE-GROUP-EMAIL>"
+  admins_owners_group_email = "my-admins@ons.gov.uk"
 }
 ```
-
-For a full list of configurable inputs, see the [Inputs](#inputs) section
-below.
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements

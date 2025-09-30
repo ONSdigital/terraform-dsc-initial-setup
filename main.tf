@@ -79,9 +79,36 @@ resource "google_kms_crypto_key_iam_member" "gcs_service_agent" {
   member        = "serviceAccount:service-${data.google_project.project.number}@gs-project-accounts.iam.gserviceaccount.com"
 }
 
-##################
-# tf gcs buckets #
-##################
+###################
+# Encryption Keys #
+###################
+
+# https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/kms_key_ring
+resource "google_kms_key_ring" "tf-kms-key-ring" {
+  name     = "tf-key-ring"
+  location = var.region
+  project  = var.project_id
+}
+
+# https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/kms_crypto_key
+resource "google_kms_crypto_key" "tf-kms-crypto-key" {
+  name            = "tf-crypto-key"
+  key_ring        = google_kms_key_ring.tf-kms-key-ring.id
+  purpose         = "ENCRYPT_DECRYPT"
+  rotation_period = var.kms_key_rotation_period
+
+  lifecycle {
+    prevent_destroy = true
+  }
+
+  labels     = local.module_labels
+  depends_on = [module.project-services]
+}
+
+
+###############
+# GCS Buckets #
+###############
 locals {
   tf_buckets_suffixes = [
     "state",      # for terraform remote state storage
@@ -172,25 +199,4 @@ resource "google_storage_bucket_iam_policy" "tf-gcs-buckets" {
   policy_data = data.google_iam_policy.tf-gcs-buckets.policy_data
 
   depends_on = [module.tf-gcs-buckets]
-}
-
-
-resource "google_kms_key_ring" "tf-kms-key-ring" {
-  name     = "tf-key-ring"
-  location = var.region
-  project  = var.project_id
-}
-
-resource "google_kms_crypto_key" "tf-kms-crypto-key" {
-  name            = "tf-crypto-key"
-  key_ring        = google_kms_key_ring.tf-kms-key-ring.id
-  purpose         = "ENCRYPT_DECRYPT"
-  rotation_period = var.kms_key_rotation_period
-
-  lifecycle {
-    prevent_destroy = true
-  }
-
-  labels     = local.module_labels
-  depends_on = [module.project-services]
 }

@@ -9,7 +9,6 @@ variable "project_id" {
 variable "region" {
   description = "The GCP region where the resources will be created."
   type        = string
-  nullable    = false
   default     = "europe-west2"
 }
 
@@ -24,7 +23,6 @@ Set to `false` to leave services enabled (removed from state only).
 See: https://www.terraform.io/docs/providers/google/r/google_project_service.html#disable_on_destroy
 EOF
   type        = bool
-  nullable    = false
   default     = false
 }
 variable "disable_dependent_services" {
@@ -35,7 +33,6 @@ Set to `false` to leave dependent services enabled.
 See: https://www.terraform.io/docs/providers/google/r/google_project_service.html#disable_dependent_services
 EOF
   type        = bool
-  nullable    = false
   default     = true
 }
 
@@ -67,7 +64,6 @@ variable "admins_owners_group_email" {
 variable "gcs_object_users" {
   description = "List of principals (user, serviceAccount, group, or domain) to grant read-only access. Each entry must be in the form: user:email, serviceAccount:email, group:email, or domain:domain."
   type        = list(string)
-  nullable    = false
   default     = []
   validation {
     condition = alltrue([
