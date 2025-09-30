@@ -91,6 +91,6 @@ module "setup" {
 
 | Name | Description |
 |------|-------------|
-| <a name="output_tf-buckets-names"></a> [tf-buckets-names](#output\_tf-buckets-names) | Map of bucket suffixes to bucket names. For example: { state = <bucket\_name>, logs = <bucket\_name>, ... } |
+| <a name="output_tf-buckets-map"></a> [tf-buckets-map](#output\_tf-buckets-map) | Map of bucket suffixes to bucket names. For example: { state = <bucket\_name>, logs = <bucket\_name>, ... } |
 | <a name="output_tf-cloud-build-sa-email"></a> [tf-cloud-build-sa-email](#output\_tf-cloud-build-sa-email) | Email of the Terraform Cloud Build service account. |
 <!-- END_TF_DOCS -->
