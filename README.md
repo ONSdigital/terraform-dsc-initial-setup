@@ -57,9 +57,9 @@ module "setup" {
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_project-services"></a> [project-services](#module\_project-services) | terraform-google-modules/project-factory/google//modules/project_services | ~> 18.0.0 |
-| <a name="module_tf-gcs-buckets"></a> [tf-gcs-buckets](#module\_tf-gcs-buckets) | terraform-google-modules/cloud-storage/google | ~> 11.0 |
-| <a name="module_tf-service-account"></a> [tf-service-account](#module\_tf-service-account) | terraform-google-modules/service-accounts/google | ~> 4.0 |
+| <a name="module_project-services"></a> [project-services](#module\_project-services) | github.com/terraform-google-modules/terraform-google-project-factory//modules/project_services | 97a03f2bf4bf1972e12467bc90850e53b6730d8f |
+| <a name="module_tf-gcs-buckets"></a> [tf-gcs-buckets](#module\_tf-gcs-buckets) | github.com/terraform-google-modules/terraform-google-cloud-storage | 54d84a43109e42c13383cf98bf1c75d3813ef7fd |
+| <a name="module_tf-service-account"></a> [tf-service-account](#module\_tf-service-account) | github.com/terraform-google-modules/terraform-google-service-accounts | ed725dc9471efb263528014bf567149a89f97c0a |
 
 ## Resources
 

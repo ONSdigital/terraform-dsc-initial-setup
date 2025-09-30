@@ -24,8 +24,7 @@ locals {
 #####################
 # https://registry.terraform.io/modules/terraform-google-modules/project-factory/google/latest/submodules/project_services
 module "project-services" {
-  source  = "terraform-google-modules/project-factory/google//modules/project_services"
-  version = "~> 18.0.0"
+  source = "github.com/terraform-google-modules/terraform-google-project-factory//modules/project_services?ref=97a03f2bf4bf1972e12467bc90850e53b6730d8f"
 
   project_id = var.project_id
 
@@ -57,8 +56,7 @@ locals {
 }
 # https://registry.terraform.io/modules/terraform-google-modules/service-accounts/google/latest
 module "tf-service-account" {
-  source       = "terraform-google-modules/service-accounts/google"
-  version      = "~> 4.0"
+  source       = "github.com/terraform-google-modules/terraform-google-service-accounts?ref=ed725dc9471efb263528014bf567149a89f97c0a"
   project_id   = var.project_id
   names        = ["tf-cloud-build"]
   descriptions = ["Terraform Cloud Build Service Account"]
@@ -132,8 +130,7 @@ locals {
 # create all the gcs buckets required for terraform in the gcs project
 # https://registry.terraform.io/modules/terraform-google-modules/cloud-storage/google/latest
 module "tf-gcs-buckets" {
-  source  = "terraform-google-modules/cloud-storage/google"
-  version = "~> 11.0"
+  source = "github.com/terraform-google-modules/terraform-google-cloud-storage?ref=54d84a43109e42c13383cf98bf1c75d3813ef7fd"
 
   # buckets configuration parameters
   project_id               = var.project_id
