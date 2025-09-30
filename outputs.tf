@@ -3,6 +3,6 @@ output "tf-cloud-build-sa-email" {
   value       = module.tf-service-account.email
 }
 output "tf-buckets-names" {
-  description = "Names of the Terraform gcs buckets, as a map of names to bucket resources."
-  value       = module.tf-gcs-buckets.names_list
+  description = "Map of bucket suffixes to bucket names. For example: { state = <bucket_name>, logs = <bucket_name>, ... }"
+  value       = module.tf-gcs-buckets.names
 }
