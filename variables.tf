@@ -15,6 +15,21 @@ variable "region" {
 ################
 # API SERVICES #
 ################
+
+variable "additional_api_services" {
+  description = <<EOF
+List of additional API services to enable in the project.
+The following services are always enabled:
+- cloudbuild.googleapis.com
+- iam.googleapis.com
+- storage.googleapis.com
+- cloudkms.googleapis.com
+- cloudresourcemanager.googleapis.com
+EOF
+  type        = list(string)
+  default     = []
+}
+
 variable "disable_services_on_destroy" {
   description = <<EOF
 Whether to disable services on destroy.

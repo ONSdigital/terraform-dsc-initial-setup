@@ -29,13 +29,14 @@ module "project-services" {
 
   project_id = var.project_id
 
-  activate_apis = [
+  activate_apis = distinct(concat([
     "cloudbuild.googleapis.com",
     "cloudkms.googleapis.com",
     "cloudresourcemanager.googleapis.com",
     "iam.googleapis.com",
     "storage.googleapis.com"
-  ]
+  ], var.additional_api_services))
+
   disable_services_on_destroy = var.disable_services_on_destroy
   disable_dependent_services  = var.disable_dependent_services
 }
