@@ -184,7 +184,7 @@ data "google_iam_policy" "tf-gcs-buckets" {
   binding {
     role = "roles/storage.admin"
     members = [
-      "group:${var.storage_admin_group}", # allow the admins/owners group to administer the tf buckets
+      "group:${var.storage_admins_group_email}", # allow the admins/owners group to administer the tf buckets
     ]
   }
   binding {

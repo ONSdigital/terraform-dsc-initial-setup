@@ -35,7 +35,7 @@ module "setup" {
   version    = "x.x.x"
   project_id = "my-gcp-project"
 
-  admins_owners_group_email = "my-admins@ons.gov.uk"
+  storage_admins_group_email = "my-admins@ons.gov.uk"
 }
 ```
 
@@ -84,7 +84,7 @@ module "setup" {
 | <a name="input_kms_key_rotation_period"></a> [kms\_key\_rotation\_period](#input\_kms\_key\_rotation\_period) | The rotation period for the KMS key ring.<br/>Must be at least 24 hours (86,400 seconds) and at most 876,000 hours (100 years, 315,360,000 seconds).<br/>Specify as a duration in seconds, e.g., "2592000s" for 30 days (2,592,000 seconds = 720 hours).<br/>Defaults to 30 days. | `string` | `"2592000s"` | no |
 | <a name="input_project_id"></a> [project\_id](#input\_project\_id) | The GCP project ID where the services will be activated. | `string` | n/a | yes |
 | <a name="input_region"></a> [region](#input\_region) | The GCP region where the resources will be created. | `string` | `"europe-west2"` | no |
-| <a name="input_storage_admin_group"></a> [storage\_admin\_group](#input\_storage\_admin\_group) | Google group email of the that will have object admin access to the terraform GCS buckets. | `string` | n/a | yes |
+| <a name="input_storage_admins_group_email"></a> [storage\_admins\_group\_email](#input\_storage\_admins\_group\_email) | Google group email of the that will have object admin access to the terraform GCS buckets. | `string` | n/a | yes |
 | <a name="input_tf_bucket_force_destroy"></a> [tf\_bucket\_force\_destroy](#input\_tf\_bucket\_force\_destroy) | Whether to force destroy the GCS buckets, allowing deletion of non-empty buckets.<br/>Set to `true` to allow deletion of non-empty buckets (recommended for Sandbox/Dev environments only).<br/>Set to `false` to prevent deletion of non-empty buckets (recommended for Staging/Prod environments).<br/>See: https://www.terraform.io/docs/providers/google/r/storage_bucket.html#force_destroy-1 | `bool` | `false` | no |
 
 ## Outputs
