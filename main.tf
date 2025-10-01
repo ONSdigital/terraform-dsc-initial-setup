@@ -61,7 +61,7 @@ module "tf-service-account" {
   names        = ["tf-cloud-build"]
   descriptions = ["Terraform Cloud Build Service Account"]
   project_roles = [
-    for role in local.tf_cloud_build_sa_roles : "${var.project_id}=>${role}" # assign roles to the same project
+    for role in local.tf_cloud_build_sa_roles : "${var.project_id}=>${role}"
   ]
 
   depends_on = [module.project-services]
@@ -181,7 +181,8 @@ data "google_iam_policy" "tf-gcs-buckets" {
   binding {
     role = "roles/storage.admin"
     members = [
-      "group:${var.storage_admins_group_email}", # allow the admins/owners group to administer the tf buckets
+      "group:${var.storage_admins_group_email}",
+      "serviceAccount:${module.tf-service-account.email}",
     ]
   }
   binding {
