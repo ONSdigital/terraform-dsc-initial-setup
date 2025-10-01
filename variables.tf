@@ -40,6 +40,7 @@ EOF
   type        = bool
   default     = false
 }
+
 variable "disable_dependent_services" {
   description = <<EOF
 Whether to disable dependent services when a service is disabled.
@@ -65,6 +66,12 @@ variable "additional_tf_cloud_build_sa_roles" {
   type        = list(string)
   nullable    = false
   default     = []
+}
+
+variable "ci_service_account_email" {
+  description = "The email of the continuous integration service account that will be used to impersonate the Terraform Cloud Build service account."
+  type        = string
+  default     = ""
 }
 
 ##################

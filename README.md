@@ -25,6 +25,8 @@ This Terraform module provides a secure, opinionated setup for Google Cloud Plat
 
 - **IAM Policy Management**: Assigns roles to groups and service accounts for secure, least-privilege access.
 
+- **CI/CD Impersonation Support**: Optionally grants a CI/CD service account permission to impersonate the Terraform Cloud Build service account, enabling secure cross-project automation.
+
 ## Usage
 
 Minimal example:
@@ -36,6 +38,9 @@ module "setup" {
   project_id = "my-gcp-project"
 
   storage_admins_group_email = "my-admins@ons.gov.uk"
+
+  # Optional: allow a CI/CD service account to impersonate the Terraform Cloud Build service account
+  ci_service_account_email = "serviceAccount:ci-sa@ci-project.iam.gserviceaccount.com"
 }
 ```
 
@@ -68,6 +73,7 @@ module "setup" {
 | [google_kms_crypto_key.tf-kms-crypto-key](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/kms_crypto_key) | resource |
 | [google_kms_crypto_key_iam_member.gcs_service_agent](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/kms_crypto_key_iam_member) | resource |
 | [google_kms_key_ring.tf-kms-key-ring](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/kms_key_ring) | resource |
+| [google_service_account_iam_member.ci-can-impersonate-setup-sa](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/service_account_iam_member) | resource |
 | [google_storage_bucket_iam_policy.tf-gcs-buckets](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket_iam_policy) | resource |
 | [google_iam_policy.tf-gcs-buckets](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/iam_policy) | data source |
 | [google_project.project](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/project) | data source |
@@ -78,6 +84,7 @@ module "setup" {
 |------|-------------|------|---------|:--------:|
 | <a name="input_additional_api_services"></a> [additional\_api\_services](#input\_additional\_api\_services) | List of additional API services to enable in the project.<br/>The following services are always enabled:<br/>- cloudbuild.googleapis.com<br/>- iam.googleapis.com<br/>- storage.googleapis.com<br/>- cloudkms.googleapis.com<br/>- cloudresourcemanager.googleapis.com | `list(string)` | `[]` | no |
 | <a name="input_additional_tf_cloud_build_sa_roles"></a> [additional\_tf\_cloud\_build\_sa\_roles](#input\_additional\_tf\_cloud\_build\_sa\_roles) | List of additional IAM roles to assign to the Terraform Cloud Build service account.<br/>  The following roles are always assigned:<br/>  - roles/cloudbuild.builds.builder<br/>  - roles/logging.logWriter<br/>  - roles/serviceusage.serviceUsageConsumer | `list(string)` | `[]` | no |
+| <a name="input_ci_service_account_email"></a> [ci\_service\_account\_email](#input\_ci\_service\_account\_email) | The email of the continuous integration service account that will be used to impersonate the Terraform Cloud Build service account. | `string` | `""` | no |
 | <a name="input_disable_dependent_services"></a> [disable\_dependent\_services](#input\_disable\_dependent\_services) | Whether to disable dependent services when a service is disabled.<br/>Set to `true` to disable dependent services.<br/>Set to `false` to leave dependent services enabled.<br/>See: https://www.terraform.io/docs/providers/google/r/google_project_service.html#disable_dependent_services | `bool` | `true` | no |
 | <a name="input_disable_services_on_destroy"></a> [disable\_services\_on\_destroy](#input\_disable\_services\_on\_destroy) | Whether to disable services on destroy.<br/>Set to `true` to disable services when the module is destroyed.<br/>Set to `false` to leave services enabled (removed from state only).<br/>See: https://www.terraform.io/docs/providers/google/r/google_project_service.html#disable_on_destroy | `bool` | `false` | no |
 | <a name="input_gcs_object_users"></a> [gcs\_object\_users](#input\_gcs\_object\_users) | List of principals (user, serviceAccount, group, or domain) to grant read-only access. Each entry must be in the form: user:email, serviceAccount:email, group:email, or domain:domain. | `list(string)` | `[]` | no |
