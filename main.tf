@@ -180,10 +180,11 @@ locals {
 data "google_iam_policy" "tf-gcs-buckets" {
   binding {
     role = "roles/storage.admin"
-    members = [
+    members = compact([
       "group:${var.storage_admins_group_email}",
       "serviceAccount:${module.tf-service-account.email}",
-    ]
+      var.ci_service_account_email != "" ? "serviceAccount:${var.ci_service_account_email}" : "",
+    ])
   }
   binding {
     role    = "roles/storage.objectUser"
