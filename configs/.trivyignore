@@ -1,2 +1,2 @@
-AVD-GCP-0066  # Buckets should be encrypted with CMEK (LOW): https://avd.aquasec.com/misconfig/google/storage/avd-gcp-0066/
-AVD-GCP-0002  # Allow buckets to have uniform bucket-level access to avoid ACLs as per gcp docs (MEDIUM): https://cloud.google.com/storage/docs/access-control/lists
+
+

@@ -111,14 +111,12 @@ resource "google_kms_crypto_key" "tf-kms-crypto-key" {
 locals {
   tf_buckets_suffixes = [
     "state",      # for terraform remote state storage
-    "logs",       # for storing terraform logs
     "plans",      # for storing terraform plan outputs
     "cloudbuild", # for storing cloud build artifacts
   ]
   # set no lifecycle rules for the state bucket, this is done through versioning
   # must be separate local as an empty set object causes the module to error
   tf_buckets_lifecycle_rules = {
-    "logs"       = [{ action = { type = "Delete" }, condition = { age = 365 } }]
     "plans"      = [{ action = { type = "Delete" }, condition = { age = 90 } }]
     "cloudbuild" = [{ action = { type = "Delete" }, condition = { age = 90 } }]
   }
@@ -127,7 +125,30 @@ locals {
     suffix => "projects/${var.project_id}/locations/${var.region}/keyRings/tf-key-ring/cryptoKeys/tf-crypto-key"
   }
 }
-# create all the gcs buckets required for terraform in the gcs project
+
+# trivy:ignore:AVD-GCP-0077
+module "log-bucket" {
+
+  source = "github.com/terraform-google-modules/terraform-google-cloud-storage//modules/simple_bucket?ref=ed8f431fc6ab9c686f89d409f1e02034f245f08f"
+
+  project_id               = var.project_id
+  location                 = var.region
+  public_access_prevention = "enforced" # not negotiable for security - enforce public access prevention
+  name                     = "${var.project_id}-tf-logs"
+  labels                   = local.module_labels
+  force_destroy            = var.tf_bucket_force_destroy
+  bucket_policy_only       = true
+  encryption = {
+    default_kms_key_name = "projects/${var.project_id}/locations/${var.region}/keyRings/tf-key-ring/cryptoKeys/tf-crypto-key"
+  }
+  versioning      = true
+  autoclass       = true
+  lifecycle_rules = [{ action = { type = "Delete" }, condition = { age = 365 } }]
+
+  depends_on = [module.project-services, module.tf-service-account]
+}
+
+
 # https://registry.terraform.io/modules/terraform-google-modules/cloud-storage/google/latest
 module "tf-gcs-buckets" {
   source = "github.com/terraform-google-modules/terraform-google-cloud-storage?ref=54d84a43109e42c13383cf98bf1c75d3813ef7fd"
@@ -136,10 +157,8 @@ module "tf-gcs-buckets" {
   project_id               = var.project_id
   location                 = var.region
   public_access_prevention = "enforced" # not negotiable for security - enforce public access prevention
-  storage_class            = "STANDARD"
   prefix                   = "${var.project_id}-tf"
   names                    = local.tf_buckets_suffixes
-  randomize_suffix         = false # disable random suffix for bucket names
   labels                   = local.module_labels
 
   # set a consistent force_destroy policy and disable adhoc ACLs for all terraform buckets
@@ -166,7 +185,13 @@ module "tf-gcs-buckets" {
   # add lifecycle rules as defined in the local (control storage costs and data retention)
   bucket_lifecycle_rules = local.tf_buckets_lifecycle_rules
 
-  depends_on = [module.project-services, module.tf-service-account] # random_id.tf-state-remote-backend
+  logging = {
+    for suffix in local.tf_buckets_suffixes : suffix => {
+      log_bucket = module.log-bucket.name
+    }
+  }
+
+  depends_on = [module.project-services, module.tf-service-account, module.log-bucket, google_kms_crypto_key.tf-kms-crypto-key]
 }
 
 # set IAM policies for the tf gcs buckets
