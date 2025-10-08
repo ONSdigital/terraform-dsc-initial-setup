@@ -205,5 +205,5 @@ resource "google_service_account_iam_member" "ci-can-impersonate-setup-sa" {
   count              = var.ci_service_account_email != null && var.ci_service_account_email != "" ? 1 : 0
   service_account_id = "projects/${var.project_id}/serviceAccounts/${module.tf-service-account.email}"
   role               = "roles/iam.serviceAccountTokenCreator"
-  member             = var.ci_service_account_email
+  member             = "serviceAccount:${var.ci_service_account_email}"
 }
