@@ -224,6 +224,31 @@ resource "google_storage_bucket_iam_policy" "tf-gcs-buckets" {
   depends_on = [module.tf-gcs-buckets]
 }
 
+# https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/iam_policy
+data "google_iam_policy" "log-bucket" {
+  binding {
+    role = "roles/storage.admin"
+    members = compact([
+      "group:${var.storage_admins_group_email}",
+      "serviceAccount:${module.tf-service-account.email}",
+      var.ci_service_account_email != "" ? "serviceAccount:${var.ci_service_account_email}" : "",
+    ])
+  }
+  binding {
+    role    = "roles/storage.objectUser"
+    members = [for user in local.gcs_object_users : user]
+  }
+}
+
+# https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket_iam.html
+resource "google_storage_bucket_iam_policy" "log-bucket" {
+  bucket      = module.log_bucket.name
+  policy_data = data.google_iam_policy.log-bucket.policy_data
+  depends_on = [module.log_bucket]
+}
+
+
+
 resource "google_service_account_iam_member" "ci-can-impersonate-setup-sa" {
   count              = var.ci_service_account_email != null && var.ci_service_account_email != "" ? 1 : 0
   service_account_id = "projects/${var.project_id}/serviceAccounts/${module.tf-service-account.email}"
