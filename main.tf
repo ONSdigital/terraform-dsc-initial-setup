@@ -174,7 +174,7 @@ module "tf-gcs-buckets" {
 
   # enable versioning only for the state-remote-backend bucket (as a recovery mechanism)
   versioning = {
-    for suffix in local.tf_buckets_suffixes : suffix => strcontains(suffix, "state-remote-backend")
+    for suffix in local.tf_buckets_suffixes : suffix => true
   }
 
   # set autoclass to true for all buckets except the state-remote-backend bucket (help minimise costs over time)

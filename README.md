@@ -99,6 +99,7 @@ module "setup" {
 
 | Name | Description |
 |------|-------------|
-| <a name="output_tf-bucket-names"></a> [tf-bucket-names](#output\_tf-bucket-names) | Map of logical bucket suffixes (state, logs, plans, cloudbuild) to their GCS bucket names. |
+| <a name="output_log_bucket_name"></a> [log\_bucket\_name](#output\_log\_bucket\_name) | Name of the log bucket. |
+| <a name="output_tf-bucket-names"></a> [tf-bucket-names](#output\_tf-bucket-names) | Map of logical bucket suffixes (state, plans, cloudbuild) to their GCS bucket names. |
 | <a name="output_tf-cloud-build-sa-email"></a> [tf-cloud-build-sa-email](#output\_tf-cloud-build-sa-email) | Email of the Terraform Cloud Build service account. |
 <!-- END_TF_DOCS -->
