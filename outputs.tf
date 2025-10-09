@@ -9,5 +9,5 @@ output "tf-bucket-names" {
 
 output "log_bucket_name" {
   description = "Name of the log bucket."
-  value       = module.log_bucket.name
+  value       = module.log-bucket.name
 }
