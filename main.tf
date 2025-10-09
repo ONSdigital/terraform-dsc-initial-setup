@@ -126,7 +126,6 @@ locals {
   }
 }
 
-# trivy:ignore:AVD-GCP-0077
 module "log-bucket" {
 
   source = "github.com/terraform-google-modules/terraform-google-cloud-storage//modules/simple_bucket?ref=ed8f431fc6ab9c686f89d409f1e02034f245f08f"
@@ -172,7 +171,6 @@ module "tf-gcs-buckets" {
   # set encryption keys for all buckets
   encryption_key_names = local.tf_encryption_key_names
 
-  # enable versioning only for the state-remote-backend bucket (as a recovery mechanism)
   versioning = {
     for suffix in local.tf_buckets_suffixes : suffix => true
   }
