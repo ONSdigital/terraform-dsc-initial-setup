@@ -242,9 +242,9 @@ data "google_iam_policy" "log-bucket" {
 
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket_iam.html
 resource "google_storage_bucket_iam_policy" "log-bucket" {
-  bucket      = module.log_bucket.name
+  bucket      = module.log-bucket.name
   policy_data = data.google_iam_policy.log-bucket.policy_data
-  depends_on = [module.log_bucket]
+  depends_on  = [module.log-bucket]
 }
 
 
