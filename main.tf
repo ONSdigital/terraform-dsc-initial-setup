@@ -288,6 +288,7 @@ locals {
       EOT
       duration        = "60s"
       threshold_value = 1
+      resource_type   = "gcs_bucket"
       filter          = <<-EOT
         resource.type="gcs_bucket" AND
         protoPayload.methodName="SetIamPolicy"
@@ -303,7 +304,9 @@ locals {
       EOT
       duration        = "60s"
       threshold_value = 1
+      resource_type   = "project"
       filter          = <<-EOT
+        resource.type="project" AND
         protoPayload.methodName:("google.iam.admin.v1.CreateRole" OR "google.iam.admin.v1.DeleteRole" OR "google.iam.admin.v1.UpdateRole")
       EOT
     }
@@ -317,7 +320,9 @@ locals {
       EOT
       duration        = "60s"
       threshold_value = 1
+      resource_type   = "gce_firewall_rule"
       filter          = <<-EOT
+        resource.type="gce_firewall_rule" AND
         protoPayload.methodName:("compute.firewalls.insert" OR "compute.firewalls.update" OR "compute.firewalls.delete")
       EOT
     }
@@ -331,7 +336,9 @@ locals {
       EOT
       duration        = "60s"
       threshold_value = 1
+      resource_type   = "gce_network"
       filter          = <<-EOT
+        resource.type="gce_network" AND
         protoPayload.methodName:("compute.networks.insert" OR "compute.networks.update" OR "compute.networks.delete")
       EOT
     }
@@ -345,7 +352,9 @@ locals {
       EOT
       duration        = "60s"
       threshold_value = 1
+      resource_type   = "project"
       filter          = <<-EOT
+        resource.type="project" AND
         protoPayload.methodName="SetIamPolicy" AND
         protoPayload.serviceData.policyDelta.bindingDeltas.member:owner
       EOT
@@ -360,8 +369,28 @@ locals {
       EOT
       duration        = "60s"
       threshold_value = 1
+      resource_type   = "gce_route"
       filter          = <<-EOT
+        resource.type="gce_route" AND
         protoPayload.methodName:("compute.routes.insert" OR "compute.routes.update" OR "compute.routes.delete")
+      EOT
+    }
+
+    audit_logging_change = {
+      description     = <<-EOT
+        Detects changes to audit logging configuration (auditConfigDeltas).
+        Lets us know if someone modifies audit logging settings for the project, which can impact security monitoring and compliance.
+      EOT
+      documentation   = <<-EOT
+        This metric tracks changes to audit logging configuration (auditConfigDeltas) in IAM policy changes. Such changes may reduce or alter the audit logs collected for your project, potentially impacting security visibility.
+      EOT
+      duration        = "60s"
+      threshold_value = 1
+      resource_type   = "project"
+      filter          = <<-EOT
+        resource.type="project" AND
+        protoPayload.methodName="SetIamPolicy" AND
+        protoPayload.serviceData.policyDelta.auditConfigDeltas:*
       EOT
     }
   }
@@ -391,7 +420,7 @@ resource "google_monitoring_alert_policy" "security_alerts" {
     content {
       display_name = "Alert on ${conditions.key}"
       condition_threshold {
-        filter          = "metric.type=\"logging.googleapis.com/user/${conditions.key}\""
+        filter          = "resource.type=\"${conditions.value.resource_type}\" AND metric.type=\"logging.googleapis.com/user/${conditions.key}\""
         duration        = conditions.value.duration
         comparison      = "COMPARISON_GT"
         threshold_value = conditions.value.threshold_value
