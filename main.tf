@@ -408,13 +408,7 @@ resource "google_monitoring_alert_policy" "security_alerts" {
   notification_channels = var.monitoring_notification_channel_ids
 
   documentation {
-    content   = <<-EOT
-      This alert policy notifies you when any of the defined security-related logging metrics detect an event.
-      Metrics monitored:
-      %{for metric_name, metric in local.logging_metrics}
-      * ${metric_name}: ${trimspace(metric.documentation)}
-      %{endfor}
-      EOT
+    content   = trimspace(local.logging_metrics[each.key].documentation)
     mime_type = "text/markdown"
   }
 
