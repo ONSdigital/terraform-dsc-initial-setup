@@ -418,7 +418,7 @@ resource "google_monitoring_alert_policy" "security_alerts" {
   dynamic "conditions" {
     for_each = { for k, v in local.logging_metrics : k => v if k == each.key }
     content {
-      display_name = "Alert on ${conditions.key}"
+      display_name = "Alert on ${each.key}"
       condition_threshold {
         filter          = "resource.type=\"${conditions.value.resource_type}\" AND metric.type=\"logging.googleapis.com/user/${conditions.key}\""
         duration        = conditions.value.duration
