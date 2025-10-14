@@ -264,3 +264,160 @@ resource "google_logging_project_sink" "logs-sink" {
   disabled    = var.disable_logging_sink
   depends_on  = [module.project-services, module.log-bucket]
 }
+
+###############
+# Monitoring #
+###############
+
+locals {
+  enable_monitoring_and_alerting = (
+    var.environment == "prod" ||
+    var.environment == "staging" ||
+    var.force_enable_monitoring
+  )
+}
+locals {
+  logging_metrics = {
+    gcs_iam_change = {
+      description     = <<-EOT
+        Detects SetIamPolicy changes on GCS buckets.
+        Lets us know if someone changes who can access or manage files in our cloud storage.
+      EOT
+      documentation   = <<-EOT
+        This metric tracks changes to IAM policies on GCS buckets, which could indicate changes in access or management permissions for cloud storage.
+      EOT
+      duration        = "60s"
+      threshold_value = 1
+      filter          = <<-EOT
+        resource.type="gcs_bucket" AND
+        protoPayload.methodName="SetIamPolicy"
+      EOT
+    }
+    custom_role_change = {
+      description     = <<-EOT
+        Detects creation, deletion, or update of custom IAM roles.
+        Lets us know if someone creates, deletes, or changes a custom role (a set of permissions) in our project.
+      EOT
+      documentation   = <<-EOT
+        This metric tracks when custom IAM roles are created, deleted, or updated, which may affect project permissions and security boundaries.
+      EOT
+      duration        = "60s"
+      threshold_value = 1
+      filter          = <<-EOT
+        protoPayload.methodName:("google.iam.admin.v1.CreateRole" OR "google.iam.admin.v1.DeleteRole" OR "google.iam.admin.v1.UpdateRole")
+      EOT
+    }
+    vpc_firewall_change = {
+      description     = <<-EOT
+        Detects insert, update, or delete of VPC firewall rules.
+        Lets us know if someone adds, removes, or changes a rule that controls network traffic in our project.
+      EOT
+      documentation   = <<-EOT
+        This metric tracks changes to VPC firewall rules, which control allowed and denied network traffic in the project.
+      EOT
+      duration        = "60s"
+      threshold_value = 1
+      filter          = <<-EOT
+        protoPayload.methodName:("compute.firewalls.insert" OR "compute.firewalls.update" OR "compute.firewalls.delete")
+      EOT
+    }
+    vpc_network_change = {
+      description     = <<-EOT
+        Detects insert, update, or delete of VPC networks.
+        Lets us know if someone creates, deletes, or changes a network in our project.
+      EOT
+      documentation   = <<-EOT
+        This metric tracks changes to VPC networks, which may impact connectivity and segmentation in the cloud environment.
+      EOT
+      duration        = "60s"
+      threshold_value = 1
+      filter          = <<-EOT
+        protoPayload.methodName:("compute.networks.insert" OR "compute.networks.update" OR "compute.networks.delete")
+      EOT
+    }
+    project_ownership_change = {
+      description     = <<-EOT
+        Detects SetIamPolicy changes that affect project owner bindings.
+        Lets us know if someone changes who owns or has full control of the project.
+      EOT
+      documentation   = <<-EOT
+        This metric tracks changes to project owner bindings, which could indicate a transfer of full control or ownership of the project.
+      EOT
+      duration        = "60s"
+      threshold_value = 1
+      filter          = <<-EOT
+        protoPayload.methodName="SetIamPolicy" AND
+        protoPayload.serviceData.policyDelta.bindingDeltas.member:owner
+      EOT
+    }
+    vpc_route_change = {
+      description     = <<-EOT
+        Detects insert, update, or delete of VPC network routes.
+        Lets us know if someone changes how network traffic is routed in our project.
+      EOT
+      documentation   = <<-EOT
+        This metric tracks changes to VPC network routes, which determine how network traffic is directed within the project.
+      EOT
+      duration        = "60s"
+      threshold_value = 1
+      filter          = <<-EOT
+        protoPayload.methodName:("compute.routes.insert" OR "compute.routes.update" OR "compute.routes.delete")
+      EOT
+    }
+  }
+}
+
+resource "google_logging_metric" "security_metrics" {
+  for_each    = local.enable_monitoring_and_alerting ? local.logging_metrics : {}
+  project     = var.project_id
+  name        = each.key
+  description = each.value.description
+  filter      = each.value.filter
+  metric_descriptor {
+    metric_kind = "DELTA"
+    value_type  = "INT64"
+    unit        = "1"
+  }
+}
+
+resource "google_monitoring_alert_policy" "security_alerts" {
+  for_each     = local.enable_monitoring_and_alerting ? local.logging_metrics : {}
+  project      = var.project_id
+  display_name = "Security Alerts"
+  combiner     = "OR"
+
+  dynamic "conditions" {
+    for_each = local.logging_metrics
+    content {
+      display_name = "Alert on ${conditions.key}"
+      condition_threshold {
+        filter          = "metric.type=\"logging.googleapis.com/user/${conditions.key}\""
+        duration        = conditions.value.duration
+        comparison      = "COMPARISON_GT"
+        threshold_value = conditions.value.threshold_value
+        aggregations {
+          alignment_period     = "60s"
+          per_series_aligner   = "ALIGN_DELTA"
+          cross_series_reducer = "REDUCE_SUM"
+          group_by_fields      = []
+        }
+      }
+    }
+  }
+
+  notification_channels = var.monitoring_notification_channel_ids
+
+  documentation {
+    content   = <<-EOT
+      This alert policy notifies you when any of the defined security-related logging metrics detect an event.
+      Metrics monitored:
+      %{for metric_name, metric in local.logging_metrics}
+      * ${metric_name}: ${trimspace(metric.documentation)}
+      %{endfor}
+      EOT
+    mime_type = "text/markdown"
+  }
+
+  user_labels = local.module_labels
+  depends_on  = [google_logging_metric.security_metrics]
+}

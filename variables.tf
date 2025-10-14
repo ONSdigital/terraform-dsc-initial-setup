@@ -12,6 +12,16 @@ variable "region" {
   default     = "europe-west2"
 }
 
+variable "environment" {
+  description = "The environment for the resources (must be one of: sandbox, dev, staging, prod)."
+  type        = string
+  nullable    = false
+  validation {
+    condition     = contains(["sandbox", "dev", "staging", "prod"], var.environment)
+    error_message = "The environment must be one of: sandbox, dev, staging, prod."
+  }
+}
+
 ################
 # API SERVICES #
 ################
@@ -128,4 +138,23 @@ Set to `false` to enable the logging sink (recommended for Staging/Prod environm
 EOF
   type        = bool
   default     = false
+}
+
+variable "force_enable_monitoring" {
+  description = <<EOF
+Set to true to enable monitoring even in non-prod/non-staging environments.
+Has no effect if environment is 'prod' or 'staging', as monitoring is always enabled for those.
+EOF
+  type        = bool
+  default     = false
+}
+
+variable "monitoring_notification_channel_ids" {
+  description = <<EOF
+List of notification channel IDs to associate with alerting policies.
+These can be created manually in the GCP console, or via Terraform.
+See: https://www.terraform.io/docs/providers/google/r/monitoring_notification_channel.html
+EOF
+  type        = list(string)
+  default     = []
 }
