@@ -255,3 +255,12 @@ resource "google_service_account_iam_member" "ci-can-impersonate-setup-sa" {
   role               = "roles/iam.serviceAccountTokenCreator"
   member             = "serviceAccount:${var.ci_service_account_email}"
 }
+
+# https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/logging_project_sink#argument-reference
+resource "google_logging_project_sink" "logs-sink" {
+  name        = "all-logs-to-bucket"
+  project     = var.project_id
+  destination = "storage.googleapis.com/${module.log-bucket.name}"
+  disabled    = var.disable_logging_sink
+  depends_on  = [module.project-services, module.log-bucket]
+}

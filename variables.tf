@@ -119,3 +119,13 @@ EOF
   nullable    = false
   default     = "2592000s" # 30 days
 }
+
+variable "disable_logging_sink" {
+  description = <<EOF
+Whether to disable the logging sink that exports all logs to the log bucket.
+Set to `true` to disable the logging sink (useful for Sandbox/Dev environments).
+Set to `false` to enable the logging sink (recommended for Staging/Prod environments).
+EOF
+  type        = bool
+  default     = false
+}
