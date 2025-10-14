@@ -275,8 +275,6 @@ locals {
     var.environment == "staging" ||
     var.force_enable_monitoring
   )
-}
-locals {
   logging_metrics = {
     gcs_iam_change = {
       description     = <<-EOT
@@ -415,24 +413,22 @@ resource "google_monitoring_alert_policy" "security_alerts" {
   display_name = "Security Alerts"
   combiner     = "OR"
 
-  dynamic "conditions" {
-    for_each = { for k, v in local.logging_metrics : k => v if k == each.key }
-    content {
-      display_name = "Alert on ${each.key}"
-      condition_threshold {
-        filter          = "resource.type=\"${conditions.value.resource_type}\" AND metric.type=\"logging.googleapis.com/user/${conditions.key}\""
-        duration        = conditions.value.duration
-        comparison      = "COMPARISON_GT"
-        threshold_value = conditions.value.threshold_value
-        aggregations {
-          alignment_period     = "60s"
-          per_series_aligner   = "ALIGN_DELTA"
-          cross_series_reducer = "REDUCE_SUM"
-          group_by_fields      = []
-        }
+  conditions {
+    display_name = "Alert on ${each.key}"
+    condition_threshold {
+      filter          = "resource.type=\"${each.value.resource_type}\" AND metric.type=\"logging.googleapis.com/user/${each.key}\""
+      duration        = each.value.duration
+      comparison      = "COMPARISON_GT"
+      threshold_value = each.value.threshold_value
+      aggregations {
+        alignment_period     = "60s"
+        per_series_aligner   = "ALIGN_DELTA"
+        cross_series_reducer = "REDUCE_SUM"
+        group_by_fields      = []
       }
     }
   }
+
 
   notification_channels = var.monitoring_notification_channel_ids
 
@@ -443,4 +439,5 @@ resource "google_monitoring_alert_policy" "security_alerts" {
 
   user_labels = local.module_labels
   depends_on  = [google_logging_metric.security_metrics]
+
 }
