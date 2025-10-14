@@ -1,9 +1,3 @@
 # .trivyignore - Trivy Ignore List
 
 This file documents Trivy misconfiguration IDs that are intentionally ignored for this project.
-
-## AVD-AZU-0012: Documented false positive
-
-AVD-AZU-0012
-<https://avd.aquasec.com/misconfig/azure/storage/avd-azu-0012/>
-This project does not define or manage any Azure infrastructure resources, this is clearly a false positive.
