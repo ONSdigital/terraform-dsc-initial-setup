@@ -416,7 +416,7 @@ resource "google_monitoring_alert_policy" "security_alerts" {
   combiner     = "OR"
 
   dynamic "conditions" {
-    for_each = local.logging_metrics
+    for_each = { for k, v in local.logging_metrics : k => v if k == each.key }
     content {
       display_name = "Alert on ${conditions.key}"
       condition_threshold {
