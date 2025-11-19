@@ -437,7 +437,7 @@ resource "google_monitoring_alert_policy" "security_alerts" {
   conditions {
     display_name = "Alert on ${each.key}"
     condition_threshold {
-      filter          = "resource.type=\"${each.value.resource_type}\" AND metric.type=\"logging.googleapis.com/user/${each.key}\""
+      filter          = "metric.type=\"logging.googleapis.com/user/${each.key}\""
       duration        = each.value.duration
       comparison      = "COMPARISON_GT"
       threshold_value = each.value.threshold_value
