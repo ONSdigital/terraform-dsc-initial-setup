@@ -10,7 +10,7 @@ on:
 # environment variables
 env:
   PYTHON_VERSION: "3.13.3"    # python version
-  TERRAFORM_VERSION: "1.13.3"  # terraform version
+  TERRAFORM_VERSION: "1.13.5"  # terraform version
 
 jobs:
 
