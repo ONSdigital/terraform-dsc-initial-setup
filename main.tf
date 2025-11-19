@@ -428,37 +428,50 @@ resource "google_logging_metric" "security_metrics" {
   depends_on = [time_sleep.wait_for_apis]
 }
 
+resource "time_sleep" "wait_for_metrics" {
+  depends_on      = [google_logging_metric.security_metrics]
+  create_duration = "10s"
+}
+
 resource "google_monitoring_alert_policy" "security_alerts" {
   for_each     = local.enable_monitoring_and_alerting ? local.logging_metrics : {}
   project      = var.project_id
   display_name = "Security Alerts"
+  enabled      = true
   combiner     = "OR"
 
   conditions {
     display_name = "Alert on ${each.key}"
+
     condition_threshold {
-      filter          = "metric.type=\"logging.googleapis.com/user/${each.key}\""
+      # Logs-based custom metrics must include a monitored resource constraint.
+      # For user-defined logging metrics the monitored resource type is 'global'.
+      # See: https://cloud.google.com/monitoring/api/resources (custom metrics default to global)
+      filter          = "resource.type=\"global\" AND metric.type=\"logging.googleapis.com/user/${each.key}\""
       duration        = each.value.duration
       comparison      = "COMPARISON_GT"
       threshold_value = each.value.threshold_value
+
       aggregations {
         alignment_period     = "60s"
         per_series_aligner   = "ALIGN_DELTA"
         cross_series_reducer = "REDUCE_SUM"
-        group_by_fields      = []
       }
     }
   }
 
-
   notification_channels = var.monitoring_notification_channel_ids
 
   documentation {
-    content   = trimspace(local.logging_metrics[each.key].documentation)
+    content   = trimspace(each.value.documentation)
     mime_type = "text/markdown"
   }
 
   user_labels = local.module_labels
-  depends_on  = [google_logging_metric.security_metrics, time_sleep.wait_for_apis]
 
+  depends_on = [
+    time_sleep.wait_for_apis,
+    time_sleep.wait_for_metrics,
+    google_logging_metric.security_metrics
+  ]
 }
