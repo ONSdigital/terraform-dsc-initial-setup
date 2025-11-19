@@ -265,6 +265,14 @@ resource "google_logging_project_sink" "logs-sink" {
   depends_on  = [module.project-services, module.log-bucket]
 }
 
+# Grant log sink service account permission to write to the log bucket
+resource "google_storage_bucket_iam_member" "log_sink_writer" {
+  bucket     = module.log-bucket.name
+  role       = "roles/storage.objectCreator"
+  member     = google_logging_project_sink.logs-sink.writer_identity
+  depends_on = [google_logging_project_sink.logs-sink]
+}
+
 ###############
 # Monitoring #
 ###############

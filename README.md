@@ -78,6 +78,7 @@ module "setup" {
 | [google_logging_project_sink.logs-sink](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/logging_project_sink) | resource |
 | [google_monitoring_alert_policy.security_alerts](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/monitoring_alert_policy) | resource |
 | [google_service_account_iam_member.ci-can-impersonate-setup-sa](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/service_account_iam_member) | resource |
+| [google_storage_bucket_iam_member.log_sink_writer](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket_iam_member) | resource |
 | [google_storage_bucket_iam_policy.log-bucket](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket_iam_policy) | resource |
 | [google_storage_bucket_iam_policy.tf-gcs-buckets](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket_iam_policy) | resource |
 | [google_iam_policy.log-bucket](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/iam_policy) | data source |
