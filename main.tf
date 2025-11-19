@@ -412,6 +412,19 @@ locals {
       EOT
     }
   }
+  # Mapping of alert monitored resource types for each custom log-based metric.
+  # Some audit/security related metrics don't have a dedicated monitored resource descriptor
+  # in Cloud Monitoring and should use 'global'. Metrics derived from bucket logs retain
+  # 'gcs_bucket'. Extend this map if new metrics are added.
+  alert_monitored_resource_types = {
+    gcs_iam_change           = "gcs_bucket"
+    custom_role_change       = "global"
+    vpc_firewall_change      = "global"
+    vpc_network_change       = "global"
+    project_ownership_change = "global"
+    vpc_route_change         = "global"
+    audit_logging_change     = "global"
+  }
 }
 
 resource "google_logging_metric" "security_metrics" {
@@ -444,10 +457,8 @@ resource "google_monitoring_alert_policy" "security_alerts" {
     display_name = "Alert on ${each.key}"
 
     condition_threshold {
-      # Logs-based custom metrics must include a monitored resource constraint.
-      # For user-defined logging metrics the monitored resource type is 'global'.
-      # See: https://cloud.google.com/monitoring/api/resources (custom metrics default to global)
-      filter          = "resource.type=\"global\" AND metric.type=\"logging.googleapis.com/user/${each.key}\""
+      # Use metric-specific monitored resource type (bucket metrics use gcs_bucket, others fall back to global).
+      filter          = "resource.type=\"${local.alert_monitored_resource_types[each.key]}\" AND metric.type=\"logging.googleapis.com/user/${each.key}\""
       duration        = each.value.duration
       comparison      = "COMPARISON_GT"
       threshold_value = each.value.threshold_value
