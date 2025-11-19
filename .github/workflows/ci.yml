@@ -40,14 +40,6 @@ jobs:
       uses: hashicorp/setup-terraform@v3
       with:
         terraform_version: ${{ env.TERRAFORM_VERSION }}
-    - name: Install terraform-docs (v0.20.0)
-      run: |
-        VERSION=v0.20.0
-        OS=linux
-        ARCH=amd64
-        curl -sSL https://github.com/terraform-docs/terraform-docs/releases/download/${VERSION}/terraform-docs-${VERSION}-${OS}-${ARCH}.tar.gz | tar -xz
-        sudo mv terraform-docs /usr/local/bin/terraform-docs
-        terraform-docs --version
     - name: Install tflint
       run: |
         curl -L https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
