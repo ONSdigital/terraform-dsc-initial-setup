@@ -118,3 +118,32 @@ module "setup" {
 | <a name="output_tf-bucket-names"></a> [tf-bucket-names](#output\_tf-bucket-names) | Map of logical bucket suffixes (state, plans, cloudbuild) to their GCS bucket names. |
 | <a name="output_tf-cloud-build-sa-email"></a> [tf-cloud-build-sa-email](#output\_tf-cloud-build-sa-email) | Email of the Terraform Cloud Build service account. |
 <!-- END_TF_DOCS -->
+
+## Tooling
+
+This module uses `terraform-docs` (Go binary) via pre-commit to keep the `README.md` inputs/outputs table updated.
+
+Install locally (macOS):
+
+```bash
+brew install terraform-docs
+```
+
+Or install a specific version using Go:
+
+```bash
+go install github.com/terraform-docs/terraform-docs@v0.20.0
+```
+
+Or download the Linux binary (used in CI):
+
+```bash
+VERSION=v0.20.0
+OS=linux
+ARCH=amd64
+curl -sSL https://github.com/terraform-docs/terraform-docs/releases/download/${VERSION}/terraform-docs-${VERSION}-${OS}-${ARCH}.tar.gz | tar -xz
+mv terraform-docs /usr/local/bin/
+terraform-docs --version
+```
+
+The `.pre-commit-config.yaml` pins terraform-docs at `v0.20.0`; update both the config and CI workflow if you bump this.
