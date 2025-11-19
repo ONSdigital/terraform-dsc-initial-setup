@@ -45,9 +45,12 @@ repos:
       - id: terraform-docs-go
         name: terraform-docs (module)
         language_version: "1.24.6"
+        exclude: '^\.terraform/'
         args:
           - "markdown"
           - "table"
+          - "--output-mode"
+          - "inject"
           - "--output-file"
           - "README.md"
           - "."
