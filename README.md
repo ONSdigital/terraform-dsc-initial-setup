@@ -49,41 +49,28 @@ module "setup" {
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.13.3, <2.0.0 |
-| <a name="requirement_google"></a> [google](#requirement\_google) | >=6.45.0, <7.0.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >=1.13.5, <2.0.0 |
+| <a name="requirement_google"></a> [google](#requirement\_google) | >=7.12.0, <8.0.0 |
+| <a name="requirement_time"></a> [time](#requirement\_time) | >=0.13.1, <1.0.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_google"></a> [google](#provider\_google) | 6.50.0 |
+| <a name="provider_time"></a> [time](#provider\_time) | 0.13.1 |
 
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_log-bucket"></a> [log-bucket](#module\_log-bucket) | github.com/terraform-google-modules/terraform-google-cloud-storage//modules/simple_bucket | ed8f431fc6ab9c686f89d409f1e02034f245f08f |
-| <a name="module_project-services"></a> [project-services](#module\_project-services) | github.com/terraform-google-modules/terraform-google-project-factory//modules/project_services | 97a03f2bf4bf1972e12467bc90850e53b6730d8f |
-| <a name="module_tf-gcs-buckets"></a> [tf-gcs-buckets](#module\_tf-gcs-buckets) | github.com/terraform-google-modules/terraform-google-cloud-storage | 54d84a43109e42c13383cf98bf1c75d3813ef7fd |
-| <a name="module_tf-service-account"></a> [tf-service-account](#module\_tf-service-account) | github.com/terraform-google-modules/terraform-google-service-accounts | ed725dc9471efb263528014bf567149a89f97c0a |
+| <a name="module_project-services"></a> [project-services](#module\_project-services) | github.com/terraform-google-modules/terraform-google-project-factory//modules/project_services | 1227d7045535b263b9dcd332c7cfb1d2a38298d6 |
+| <a name="module_setup"></a> [setup](#module\_setup) | ./setup | n/a |
 
 ## Resources
 
 | Name | Type |
 |------|------|
-| [google_kms_crypto_key.tf-kms-crypto-key](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/kms_crypto_key) | resource |
-| [google_kms_crypto_key_iam_member.gcs_service_agent](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/kms_crypto_key_iam_member) | resource |
-| [google_kms_key_ring.tf-kms-key-ring](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/kms_key_ring) | resource |
-| [google_logging_metric.security_metrics](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/logging_metric) | resource |
-| [google_logging_project_sink.logs-sink](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/logging_project_sink) | resource |
-| [google_monitoring_alert_policy.security_alerts](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/monitoring_alert_policy) | resource |
-| [google_service_account_iam_member.ci-can-impersonate-setup-sa](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/service_account_iam_member) | resource |
-| [google_storage_bucket_iam_member.log_sink_writer](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket_iam_member) | resource |
-| [google_storage_bucket_iam_policy.log-bucket](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket_iam_policy) | resource |
-| [google_storage_bucket_iam_policy.tf-gcs-buckets](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket_iam_policy) | resource |
-| [google_iam_policy.log-bucket](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/iam_policy) | data source |
-| [google_iam_policy.tf-gcs-buckets](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/iam_policy) | data source |
-| [google_project.project](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/project) | data source |
+| [time_sleep.wait_for_apis](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) | resource |
 
 ## Inputs
 
@@ -104,6 +91,8 @@ module "setup" {
 | <a name="input_region"></a> [region](#input\_region) | The GCP region where the resources will be created. | `string` | `"europe-west2"` | no |
 | <a name="input_storage_admins_group_email"></a> [storage\_admins\_group\_email](#input\_storage\_admins\_group\_email) | Google group email of the that will have object admin access to the terraform GCS buckets. | `string` | n/a | yes |
 | <a name="input_tf_bucket_force_destroy"></a> [tf\_bucket\_force\_destroy](#input\_tf\_bucket\_force\_destroy) | Whether to force destroy the GCS buckets, allowing deletion of non-empty buckets.<br/>Set to `true` to allow deletion of non-empty buckets (recommended for Sandbox/Dev environments only).<br/>Set to `false` to prevent deletion of non-empty buckets (recommended for Staging/Prod environments).<br/>See: https://www.terraform.io/docs/providers/google/r/storage_bucket.html#force_destroy-1 | `bool` | `false` | no |
+| <a name="input_wait_for_apis"></a> [wait\_for\_apis](#input\_wait\_for\_apis) | Whether to wait for APIs to be enabled before proceeding.<br/>Set to true to wait for APIs to be enabled, or false to skip waiting. | `bool` | n/a | yes |
+| <a name="input_wait_for_apis_duration"></a> [wait\_for\_apis\_duration](#input\_wait\_for\_apis\_duration) | The duration to wait for APIs to be enabled, in seconds.<br/>Defaults to 300 seconds (5 minutes). | `number` | `300` | no |
 
 ## Outputs
 

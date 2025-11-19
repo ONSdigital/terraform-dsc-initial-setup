@@ -1,13 +1,13 @@
 output "tf-cloud-build-sa-email" {
   description = "Email of the Terraform Cloud Build service account."
-  value       = module.setup.tf-cloud-build-sa-email
+  value       = module.tf-service-account.email
 }
 output "tf-bucket-names" {
   description = "Map of logical bucket suffixes (state, plans, cloudbuild) to their GCS bucket names."
-  value       = module.setup.tf-bucket-names
+  value       = module.tf-gcs-buckets.names
 }
 
 output "log_bucket_name" {
   description = "Name of the log bucket."
-  value       = module.setup.log_bucket_name
+  value       = module.log-bucket.name
 }

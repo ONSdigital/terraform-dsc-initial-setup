@@ -22,45 +22,6 @@ variable "environment" {
   }
 }
 
-################
-# API SERVICES #
-################
-
-variable "additional_api_services" {
-  description = <<EOF
-List of additional API services to enable in the project.
-The following services are always enabled:
-- cloudbuild.googleapis.com
-- iam.googleapis.com
-- storage.googleapis.com
-- cloudkms.googleapis.com
-- cloudresourcemanager.googleapis.com
-EOF
-  type        = list(string)
-  default     = []
-}
-
-variable "disable_services_on_destroy" {
-  description = <<EOF
-Whether to disable services on destroy.
-Set to `true` to disable services when the module is destroyed.
-Set to `false` to leave services enabled (removed from state only).
-See: https://www.terraform.io/docs/providers/google/r/google_project_service.html#disable_on_destroy
-EOF
-  type        = bool
-  default     = false
-}
-
-variable "disable_dependent_services" {
-  description = <<EOF
-Whether to disable dependent services when a service is disabled.
-Set to `true` to disable dependent services.
-Set to `false` to leave dependent services enabled.
-See: https://www.terraform.io/docs/providers/google/r/google_project_service.html#disable_dependent_services
-EOF
-  type        = bool
-  default     = true
-}
 
 #######
 # IAM #
@@ -157,22 +118,4 @@ See: https://www.terraform.io/docs/providers/google/r/monitoring_notification_ch
 EOF
   type        = list(string)
   default     = []
-}
-
-variable "wait_for_apis" {
-  description = <<EOF
-Whether to wait for APIs to be enabled before proceeding.
-Set to true to wait for APIs to be enabled, or false to skip waiting.
-EOF
-  type        = bool
-  nullable    = false
-}
-
-variable "wait_for_apis_duration" {
-  description = <<EOF
-The duration to wait for APIs to be enabled, in seconds.
-Defaults to 300 seconds (5 minutes).
-EOF
-  type        = number
-  default     = 300
 }

@@ -1,3 +1,4 @@
 # .trivyignore - Trivy Ignore List
 
 This file documents Trivy misconfiguration IDs that are intentionally ignored for this project.
+.venv
