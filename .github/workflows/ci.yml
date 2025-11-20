@@ -2,19 +2,20 @@
 # - pre-commit checks (on all pushes and PRs to main branch)
 name: CI
 
+
 on:
   push:
   pull_request:
     branches: [ "main" ]
 
-# environment variables
+permissions:
+  contents: read
+
 env:
-  PYTHON_VERSION: "3.13.3"    # python version
-  TERRAFORM_VERSION: "1.13.5"  # terraform version
+  TERRAFORM_VERSION: "1.13.5"
 
 jobs:
 
-  # pre-commit checks - cache requirements and pre-commits for speed.
   pre-commit:
     name: Pre-commits
     runs-on: ubuntu-latest
@@ -22,15 +23,11 @@ jobs:
     steps:
     - name: Checkout repo
       uses: actions/checkout@v4
-    - name: Set up Python ${{ env.PYTHON_VERSION }}
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ env.PYTHON_VERSION }}
-        cache: "pip"
-    - name: Install `terraform-dsc-initial-setup` dependencies
+    - name: Set up Homebrew
+      uses: Homebrew/actions/setup-homebrew@main
+    - name: Install pre-commit, trivy, and tflint with Homebrew
       run: |
-        python -m pip install --upgrade pip
-        python -m pip install -r requirements.txt
+        brew install pre-commit trivy tflint
     - name: Cache pre-commits
       uses: actions/cache@v4
       with:
@@ -40,13 +37,6 @@ jobs:
       uses: hashicorp/setup-terraform@v3
       with:
         terraform_version: ${{ env.TERRAFORM_VERSION }}
-    - name: Install tflint
-      run: |
-        curl -L https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
-    - name: Install trivy (latest release)
-      run: |
-        wget -qO- https://api.github.com/repos/aquasecurity/trivy/releases/latest | grep "browser_download_url.*Linux-64bit.deb" | cut -d '"' -f 4 | wget -qi -
-        sudo dpkg -i trivy_*_Linux-64bit.deb
     - name: Install pre-commit checks
       run: |
         pre-commit install
