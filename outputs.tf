@@ -11,3 +11,13 @@ output "log_bucket_name" {
   description = "Name of the log bucket."
   value       = module.log-bucket.name
 }
+
+output "cmek_key_ring_id" {
+  description = "The resource name of the CMEK key ring."
+  value       = google_kms_key_ring.tf-kms-key-ring.id
+}
+
+output "cmek_key_id" {
+  description = "The resource name of the CMEK key."
+  value       = google_kms_crypto_key.tf-kms-crypto-key.id
+}
