@@ -109,7 +109,7 @@ module "setup" {
 | <a name="input_storage_admins_group_email"></a> [storage\_admins\_group\_email](#input\_storage\_admins\_group\_email) | Google group email of the that will have object admin access to the terraform GCS buckets. | `string` | n/a | yes |
 | <a name="input_tf_bucket_force_destroy"></a> [tf\_bucket\_force\_destroy](#input\_tf\_bucket\_force\_destroy) | Whether to force destroy the GCS buckets, allowing deletion of non-empty buckets.<br/>Set to `true` to allow deletion of non-empty buckets (recommended for Sandbox/Dev environments only).<br/>Set to `false` to prevent deletion of non-empty buckets (recommended for Staging/Prod environments).<br/>See: https://www.terraform.io/docs/providers/google/r/storage_bucket.html#force_destroy-1 | `bool` | `false` | no |
 | <a name="input_wait_for_apis"></a> [wait\_for\_apis](#input\_wait\_for\_apis) | Whether to wait for APIs to be enabled before proceeding.<br/>Set to true to wait for APIs to be enabled, or false to skip waiting. | `bool` | n/a | yes |
-| <a name="input_wait_for_apis_duration"></a> [wait\_for\_apis\_duration](#input\_wait\_for\_apis\_duration) | The duration to wait for APIs to be enabled, in seconds.<br/>Defaults to 300 seconds (5 minutes). | `number` | `300` | no |
+| <a name="input_wait_for_apis_duration"></a> [wait\_for\_apis\_duration](#input\_wait\_for\_apis\_duration) | The duration to wait for APIs to be enabled, in seconds.<br/>Defaults to 600 seconds (10 minutes). | `number` | `600` | no |
 
 ## Outputs
 

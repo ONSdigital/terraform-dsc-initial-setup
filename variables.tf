@@ -171,8 +171,8 @@ EOF
 variable "wait_for_apis_duration" {
   description = <<EOF
 The duration to wait for APIs to be enabled, in seconds.
-Defaults to 300 seconds (5 minutes).
+Defaults to 600 seconds (10 minutes).
 EOF
   type        = number
-  default     = 300
+  default     = 600
 }
