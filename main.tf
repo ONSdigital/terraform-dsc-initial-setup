@@ -39,7 +39,7 @@ module "project-services" {
 resource "time_sleep" "wait_for_apis" {
   count           = var.wait_for_apis ? 1 : 0
   depends_on      = [module.project-services]
-  create_duration = var.wait_for_apis_duration
+  create_duration = "${var.wait_for_apis_duration}s"
 }
 
 
