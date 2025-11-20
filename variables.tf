@@ -13,12 +13,12 @@ variable "region" {
 }
 
 variable "environment" {
-  description = "The environment for the resources (must be one of: sandbox, dev, staging, prod)."
+  description = "The environment for the resources (must be one of: sandbox, dev, staging, prod, ci)."
   type        = string
   nullable    = false
   validation {
-    condition     = contains(["sandbox", "dev", "staging", "prod"], var.environment)
-    error_message = "The environment must be one of: sandbox, dev, staging, prod."
+    condition     = contains(["sandbox", "dev", "staging", "prod", "ci"], var.environment)
+    error_message = "The environment must be one of: sandbox, dev, staging, prod, ci."
   }
 }
 
